@@ -17,7 +17,8 @@ $(function() {
   peer.on('open', id => {
     $('#my-id').text(peer.id);
     // Get things started
-    vm.join_user(id, null);
+    vm.join_user(id);
+    vm.add_peer(id);
     step1();
   });
 
@@ -106,18 +107,24 @@ $(function() {
     const constraints = { video : true, audio : true };
     navigator.mediaDevices.getUserMedia(constraints).then(stream => {
       console.log(stream);
-      var video = document.createElement("video")
-      video.setAttribute("id", "video-stream-" + stream.id)
-      video.srcObject = stream
-      video.play()
-      // video.autoplay = true
-      // video.playsinline = true
-      // video.setAttribute("width", window.innerWidth);
-      video.setAttribute("height", window.innerHeight - 100);
-      document.body.insertBefore(video, document.getElementById("container"))
+
+      // var video = document.createElement("video")
+      // video.setAttribute("id", "video-stream-" + stream.id)
+      // video.srcObject = stream
+      // video.play()
+      // // video.autoplay = true
+      // // video.playsinline = true
+      // // video.setAttribute("width", window.innerWidth);
+      // video.setAttribute("height", window.innerHeight - 100);
+      // document.body.insertBefore(video, document.getElementById("container"))
+
+      // console.log(document.getElementById(peer.id))
+      // document.getElementById(peer.id).srcObject = stream;
 
       // $('#my-video').get(0).srcObject = stream;
       localStream = stream;
+      vm.set_stream(peer.id, stream);
+      vm.add_stream(peer.id, stream);
 
       if (room) {
         room.replaceStream(stream);
@@ -125,8 +132,6 @@ $(function() {
       }
 
       // step2();
-
-      vm.set_stream(peer.id, localStream);
 
       const roomName = "room1";
       room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: localStream});
@@ -138,42 +143,31 @@ $(function() {
     });
   }
 
-  function step2() {
-    $('#step1, #step3').hide();
-    $('#step2').show();
-    $('#join-room').focus();
-  }
-
   function step3(room) {
     // Wait for stream on the call, then set peer video display
     room.on('stream', stream => {
       console.log(stream);
       const peerId = stream.peerId;
-      vm.join_user(peerId, stream);
-      // const id = 'video_' + peerId + '_' + stream.id.replace('{', '').replace('}', '');
-
-      // $('#their-videos').append($(
-      //   '<div class="video_' + peerId +'" id="' + id + '">' +
-      //     '<label>' + stream.peerId + ':' + stream.id + '</label>' +
-      //     '<video class="remoteVideos" autoplay playsinline>' +
-      //   '</div>'));
-      // const el = $('#' + id).find('video').get(0);
-      // el.srcObject = stream;
-      // el.play();
+      vm.set_stream(peerId, stream);
+      vm.add_stream(peerId, stream);
     });
 
     room.on('removeStream', stream => {
       const peerId = stream.peerId;
       vm.leave_user(peerId);
-      // $('#video_' + peerId + '_' + stream.id.replace('{', '').replace('}', '')).remove();
+      vm.del_stream(peerId);
     });
 
-    // UI stuff
-    room.on('close', step2);
+    room.on('peerJoin', peerId => {
+      vm.join_user(peerId);
+    })
+
     room.on('peerLeave', peerId => {
-      $('.video_' + peerId).remove();
+      vm.leave_user(peerId);
+      vm.del_peer(peerId);
     });
-    $('#step1, #step2').hide();
-    $('#step3').show();
+
+    room.on('close', () => {
+    });
   }
 });

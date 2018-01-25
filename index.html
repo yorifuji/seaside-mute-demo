@@ -12,8 +12,11 @@
   <body>
     <div id="vue-app" class="container">
       <ol>
-        <li v-for="user in users" v-bind:key="user.peerId">{{ formatted_user(user) }}</li>
+        <li v-for="user in users" :key="user.peerId">{{ formatted_user(user) }}</li>
       </ol>
+      <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" autoplay playsinline></video>
+      <!-- <video v-for="stream in streams" v-if="stream.stream" :id="stream.id" :style="stream.style" autoplay playsinline></video> -->
+      <!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
       <nav class="navbar fixed-bottom navbar-expand-md navbar-dark bg-dark">
         <a class="navbar-brand" href="#">Bottom navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,47 +63,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-<!--
-<script src="https://cdn.jsdelivr.net/npm/vue" type="text/javascript"></script>
--->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue" type="text/javascript"></script> -->
     <script type="text/javascript" src="./script/vue.js"></script>
-    <script type="text/javascript">
-      var vm = new Vue({
-        el: "#vue-app",
-        computed: {
-
-        },
-        methods: {
-          formatted_user: function(user) {
-            return `user.peerId:${user.peerId}`;
-          },
-          create_user: function(peerId, stream) {
-            return {
-              peerId: peerId,
-              stream: stream
-            }
-          },
-          set_stream: function(peerId, stream) {
-            this.users.forEach(user => {
-              if (user.peerId == peerId) user.stream = stream;
-            });
-          },
-          join_user: function(peerId, stream) {
-            this.users.push(this.create_user(peerId, stream));
-          },
-          leave_user: function(peerId) {
-            this.users = this.users.filter(user => user.peerId != peerId);
-          }
-        },
-        data: {
-          users: []
-        }
-      });
-    </script>
+    <script type="text/javascript" src="./script/main.js?foo=bar"></script>
 
     <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
     <script type="text/javascript" src="./skyway/key.js"></script>
-    <script type="text/javascript" src="./skyway/script.js"></script>
+    <script type="text/javascript" src="./skyway/script.js?foo=bar"></script>
 
   </body>
 </html>
