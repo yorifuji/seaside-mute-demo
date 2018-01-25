@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <div id="vue-app" class="container">
+<!--
+            <video v-if="stream" id="foo" :style="style" autoplay playsinline></video>
+-->
+        <!-- <video v-if="stream" id="foo" :style="style" autoplay playsinline></video> -->
+        <video id="bar" v-bind:srcObject.prop="stream" style="width: 100px; height:100px" autoplay playsinline></video>
+     <!--
+          <video-component v-if="stream" :srcObject="stream"></video-component>
+     -->
+    </div>
+
+    <script type="text/javascript" src="./script/vue.js"></script>
+    <script type="text/javascript">
+
+        var videoComponent = {
+            template: '<video id="foo" :srcObject="stream" width="100px" height="100px" autoplay="autoplay" playsinline>',
+            props: ['stream']
+        }
+        Vue.component("video-component", videoComponent);
+
+        var vm = new Vue({
+        el: "#vue-app",
+        computed: {
+        },
+        methods: {
+          formatted_user: function(user) {
+            return `user.peerId:${user.peerId}`;
+          },
+          create_user: function(peerId, stream) {
+            return {
+              peerId: peerId,
+              stream: stream,
+              style: {
+                width: "100px",
+                height: "100px"
+              }
+            }
+          },
+          set_stream: function(peerId, stream) {
+            this.users.forEach(user => {
+              if (user.peerId == peerId) user.stream = stream;
+            });
+          },
+          join_user: function(peerId, stream) {
+            this.users.push(this.create_user(peerId, stream));
+          },
+          leave_user: function(peerId) {
+            this.users = this.users.filter(user => user.peerId != peerId);
+          }
+        },
+        data: {
+            users: [],
+            stream: null,
+            style: {
+              width: "100px",
+              height: "100px"
+            }
+        },
+        // watch:{
+        //     stream: function (newValue, oldValue) {
+        //         // document.getElementById("foo").srcObject = stream;
+        //         // document.getElementById("foo").play()
+
+        //         // this is oK
+        //         // window.setTimeout(function() {
+        //         //     // alert("set stream2");
+        //         //     document.getElementById("foo").srcObject = vm.stream;
+        //         // }, 1);
+
+        //         // ok this one.
+        //         Vue.nextTick()
+        //             .then(function () {
+        //                 document.getElementById("foo").srcObject = vm.stream;
+        //             })
+        //     }
+        //  }
+      });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+    <script type="text/javascript" src="./skyway/key.js"></script>
+    <script type="text/javascript" src="./skyway/script2.js?foo=bar"></script>
+
+  </body>
+</html>
