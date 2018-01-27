@@ -8,15 +8,39 @@
     <title>Bottom navbar example for Bootstrap</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style type="text/css">
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      .container {
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+      }
+      .video-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+      video {
+        object-fit: cover;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="vue-app" class="container">
-      <ol>
-        <li v-for="user in users" :key="user.peerId">{{ formatted_user(user) }}</li>
-      </ol>
-      <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" autoplay playsinline></video>
-      <!-- <video v-for="stream in streams" v-if="stream.stream" :id="stream.id" :style="stream.style" autoplay playsinline></video> -->
-      <!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
+      <section id="vue-app" class="video-container">
+        <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" autoplay playsinline></video>
+	<!-- <video v-for="stream in streams" v-if="stream.stream" :id="stream.id" :style="stream.style" autoplay playsinline></video> -->
+	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
+      </section>
       <nav class="navbar fixed-bottom navbar-expand-md navbar-dark bg-dark">
         <a class="navbar-brand" href="#">Bottom navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +94,13 @@
     <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
     <script type="text/javascript" src="./skyway/key.js"></script>
     <script type="text/javascript" src="./skyway/script.js?foo=bar"></script>
+    <script type="text/javascript">
+      $(window).on('load resize', function(){
+        $(".container").width(window.innerWidth);
+        $(".container").css('max-width',window.innerWidth);
+        $(".container").height(window.innerHeight - $(".navbar").outerHeight());
+      });
+    </script>
 
   </body>
 </html>

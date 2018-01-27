@@ -10,10 +10,12 @@ var vm = new Vue({
       return {
         peerId: peerId,
         stream: null,
+/*
         style: {
-          width: "640px",
-          height: "480px",
+            width: window.innerWidth + "px",
+            height: window.innerHeight - 56 + "px",
         }
+*/
       }
     },
     set_stream: function(peerId, stream) {
