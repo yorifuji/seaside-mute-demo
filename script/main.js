@@ -19,8 +19,8 @@ var vm = new Vue({
         }
         else {
           user.style = {
-            top: "100px",
-            left: 100 * index + "px",
+            bottom: "10px",
+            right: 10 * index + 160 * (index - 1) + "px",
             width : "160px",
             height: "120px",
             zIndex: 2,
@@ -41,9 +41,16 @@ var vm = new Vue({
       }
     },
     set_stream: function(peerId, stream) {
-      this.users.forEach(user => {
-        if (user.peerId == peerId) user.stream = stream;
-      });
+      if (this.users.filter(user => user.peerId == peerId).length == 0) {
+        let user = this.create_user(peerId);
+        user.stream = stream;
+        this.users.push(user);
+      }
+      else {
+        this.users.forEach(user => {
+          if (user.peerId == peerId) user.stream = stream;
+        });
+      }
       this.calc_layout();
     },
     join_user: function(peerId) {
