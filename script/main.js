@@ -3,6 +3,12 @@ var vm = new Vue({
   computed: {
   },
   methods: {
+    click_video: function(peerId) {
+      let users = this.users.filter(user => user.peerId == peerId);
+      this.users = users.concat(this.users.filter(user => user.peerId != peerId));
+      this.calc_layout();
+      this.users.forEach(user => console.log(user.peerId))
+    },
     formatted_user: function(user) {
       return `user.peerId:${user.peerId}`;
     },
@@ -20,9 +26,9 @@ var vm = new Vue({
         else {
           user.style = {
             bottom: "10px",
-            right: 10 * index + 160 * (index - 1) + "px",
-            width : "160px",
-            height: "120px",
+            right: 10 * index + 200 * (index - 1) + "px",
+            width : "200px",
+            height: "150px",
             zIndex: 2,
           }
         }
@@ -32,12 +38,6 @@ var vm = new Vue({
       return {
         peerId: peerId,
         stream: null,
-        style: {
-          top: "100px",
-          left: "100px",
-          width : "320px",
-          height: "240px",
-        }
       }
     },
     set_stream: function(peerId, stream) {
