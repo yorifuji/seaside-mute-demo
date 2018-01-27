@@ -16,7 +16,6 @@
       .container {
         margin: 0px;
         padding: 0px;
-        width: 100%;
       }
       .video-container {
         width: 100%;
@@ -29,14 +28,12 @@
         position: absolute;
         height: 100%;
         width: 100%;
-        top: 0;
-        left: 0;
       }
     </style>
   </head>
   <body>
     <div id="vue-app" class="container">
-      <section id="vue-app" class="video-container">
+      <section class="video-container">
         <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" autoplay playsinline></video>
 	<!-- <video v-for="stream in streams" v-if="stream.stream" :id="stream.id" :style="stream.style" autoplay playsinline></video> -->
 	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
@@ -97,8 +94,8 @@
     <script type="text/javascript">
       $(window).on('load resize', function(){
         $(".container").width(window.innerWidth);
-        $(".container").css('max-width',window.innerWidth);
         $(".container").height(window.innerHeight - $(".navbar").outerHeight());
+        $(".container").css('max-width',window.innerWidth); // to clear bootsrap css
       });
     </script>
 
