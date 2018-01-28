@@ -36,7 +36,7 @@
   <body>
     <div id="vue-app" class="container">
       <section class="video-container">
-        <video v-for="user in visible_users" v-source="user.stream" :class="video_fill_class" :id="user.peerId" :style="user.style" @click="click_video(user.peerId)" :key="user.peerId" autoplay playsinline></video>
+        <video v-for="user in visible_users" v-source="user.stream" :class="video_fill_class" :id="user.peerId" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video>
         <!-- <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video> -->
       	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
       </section>
