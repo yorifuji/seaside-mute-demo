@@ -33,7 +33,7 @@
   <body>
     <div id="vue-app" class="container">
       <section class="video-container">
-        <video v-for="user in visible_users" v-source="user.stream" :id="user.peerId" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video>
+        <video v-for="user in visible_users" v-source="user.stream" :id="user.peerId" :style="user.style" @click="click_video(user.peerId)" :key="user.peerId" autoplay playsinline></video>
         <!-- <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video> -->
 	<!-- <video v-for="stream in streams" v-if="stream.stream" :id="stream.id" :style="stream.style" autoplay playsinline></video> -->
 	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
@@ -55,11 +55,15 @@
               <a class="nav-link disabled" href="#">Disabled</a>
             </li>
             <li class="nav-item dropup">
-              <a class="nav-link dropdown-toggle" href="https://getbootstrap.com" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropup</a>
+              <a class="nav-link dropdown-toggle" href="https://getbootstrap.com" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Camera</a>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
+                <a class="dropdown-item" href="#" v-for="camera in camera.device" @click="select_camera(camera)">{{ camera.label }}</a>
+              </div>
+            </li>
+            <li class="nav-item dropup">
+              <a class="nav-link dropdown-toggle" href="https://getbootstrap.com" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Microphone</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown10">
+                <a class="dropdown-item" href="#" v-for="mic in microphone.device" @click="select_mic(mic)">{{ mic.label }}</a>
               </div>
             </li>
           </ul>

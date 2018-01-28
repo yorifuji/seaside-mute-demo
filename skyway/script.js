@@ -25,32 +25,15 @@ $(function() {
   peer.on('error', err => {
     alert(err.message);
     // Return to step 2 if error occurs
-    step2();
   });
 
-  $('#make-call').on('submit', e => {
-    e.preventDefault();
-    // Initiate a call!
-    const roomName = $('#join-room').val();
-    if (!roomName) {
-      return;
-    }
+  function make_call(roomName) {
     room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: localStream});
+  }
 
-    $('#room-id').text(roomName);
-    step3(room);
-  });
-
-  $('#end-call').on('click', () => {
+  function room_close() {
     room.close();
-    step2();
-  });
-
-  // Retry if getUserMedia fails
-  $('#step1-retry').on('click', () => {
-    $('#step1-error').hide();
-    step1();
-  });
+  }
 
   // set up audio and video input selectors
   const audioSelect = $('#audioSource');
@@ -59,39 +42,15 @@ $(function() {
 
   navigator.mediaDevices.enumerateDevices()
     .then(deviceInfos => {
-      const values = selectors.map(select => select.val() || '');
-	selectors.forEach(select => {
-        const children = select.children(':first');
-        while (children.length) {
-          select.remove(children);
-        }
-      });
-	for (let i = 0; i !== deviceInfos.length; ++i) {
-	    console.log(deviceInfos[i])
+	    for (let i = 0; i !== deviceInfos.length; ++i) {
+	      console.log(deviceInfos[i])
         const deviceInfo = deviceInfos[i];
-        const option = $('<option>').val(deviceInfo.deviceId);
-
         if (deviceInfo.kind === 'audioinput') {
-          option.text(deviceInfo.label ||
-            'Microphone ' + (audioSelect.children().length + 1));
-          audioSelect.append(option);
+          vm.microphone.device.push(deviceInfo)
         } else if (deviceInfo.kind === 'videoinput') {
-          option.text(deviceInfo.label ||
-            'Camera ' + (videoSelect.children().length + 1));
-          videoSelect.append(option);
+          vm.camera.device.push(deviceInfo)
         }
       }
-
-      selectors.forEach((select, selectorIndex) => {
-        if (Array.prototype.slice.call(select.children()).some(n => {
-          return n.value === values[selectorIndex];
-        })) {
-          select.val(values[selectorIndex]);
-        }
-      });
-
-      videoSelect.on('change', step1);
-      audioSelect.on('change', step1);
     });
 
   function step1() {
@@ -108,20 +67,6 @@ $(function() {
     navigator.mediaDevices.getUserMedia(constraints).then(stream => {
       console.log(stream);
 
-      // var video = document.createElement("video")
-      // video.setAttribute("id", "video-stream-" + stream.id)
-      // video.srcObject = stream
-      // video.play()
-      // // video.autoplay = true
-      // // video.playsinline = true
-      // // video.setAttribute("width", window.innerWidth);
-      // video.setAttribute("height", window.innerHeight - 100);
-      // document.body.insertBefore(video, document.getElementById("container"))
-
-      // console.log(document.getElementById(peer.id))
-      // document.getElementById(peer.id).srcObject = stream;
-
-      // $('#my-video').get(0).srcObject = stream;
       localStream = stream;
       vm.set_stream(peer.id, stream);
       vm.add_stream(peer.id, stream);
@@ -131,14 +76,11 @@ $(function() {
         return;
       }
 
-      // step2();
-
       const roomName = "room1";
       room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: localStream});
       step3(room);
 
     }).catch(err => {
-      $('#step1-error').show();
       console.error(err);
     });
   }

@@ -14,6 +14,12 @@ var vm = new Vue({
       this.users = users.concat(this.users.filter(user => user.peerId != peerId));
       this.calc_layout();
     },
+    select_mic: function(device) {
+      console.log(device)
+    },
+    select_camera: function(device) {
+      console.log(device)
+    },
     formatted_user: function(user) {
       return `user.peerId:${user.peerId}`;
     },
@@ -91,6 +97,14 @@ var vm = new Vue({
   },
   data: {
     users: [],
+    microphone: {
+      device : [],
+      using: null,
+    },
+    camera: {
+      device : [],
+      using: null,
+    },
     peers: [],  // { id : "foo", peer   : obj } 
     streams: [] // { id : "foo", stream : obj }
   },
