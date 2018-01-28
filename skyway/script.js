@@ -18,7 +18,6 @@ $(function() {
     $('#my-id').text(peer.id);
     // Get things started
     vm.join_user(id);
-    vm.add_peer(id);
     step1();
   });
 
@@ -69,7 +68,6 @@ $(function() {
 
       localStream = stream;
       vm.set_stream(peer.id, stream);
-      vm.add_stream(peer.id, stream);
 
       if (room) {
         room.replaceStream(stream);
@@ -91,13 +89,11 @@ $(function() {
       console.log(stream);
       const peerId = stream.peerId;
       vm.set_stream(peerId, stream);
-      vm.add_stream(peerId, stream);
     });
 
     room.on('removeStream', stream => {
       const peerId = stream.peerId;
       vm.leave_user(peerId);
-      vm.del_stream(peerId);
     });
 
     room.on('peerJoin', peerId => {
@@ -106,7 +102,6 @@ $(function() {
 
     room.on('peerLeave', peerId => {
       vm.leave_user(peerId);
-      vm.del_peer(peerId);
     });
 
     room.on('close', () => {

@@ -3,6 +3,9 @@ var vm = new Vue({
   computed: {
     visible_users: function() {
       return this.users.filter(user => user.stream);
+    },
+    video_fill_class: function() {
+      return { "video-fill-cover" : this.video_fill.using == "cover" }
     }
   },
   methods: {
@@ -12,7 +15,7 @@ var vm = new Vue({
     click_video: function(peerId) {
       let users = this.users.filter(user => user.peerId == peerId);
       this.users = users.concat(this.users.filter(user => user.peerId != peerId));
-      this.calc_layout();
+//      this.calc_layout();
     },
     select_mic: function(device) {
       console.log(device)
@@ -20,30 +23,62 @@ var vm = new Vue({
     select_camera: function(device) {
       console.log(device)
     },
+    select_video_fill: function(mode) {
+      this.video_fill.using = mode;
+    },
+    select_video_layout: function(mode) {
+      this.video_layout.using = mode;
+    },
     formatted_user: function(user) {
       return `user.peerId:${user.peerId}`;
     },
     calc_layout: function() {
-      this.users.forEach((user, index) => {
-        if (index == 0) {
-          user.style = {
-            top: "0px",
-            left: "0px",
-            width: "100%",
-            height: "100%",
-            zIndex: 1,
+      if (this.video_layout.using == "pinp") {
+        this.users.forEach((user, index) => {
+          if (index == 0) {
+            user.style = {
+              top: "0px",
+              left: "0px",
+              width: "100%",
+              height: "100%",
+              zIndex: 1,
+            }
           }
-        }
-        else {
-          user.style = {
-            bottom: "10px",
-            right: 10 * index + 200 * (index - 1) + "px",
-            width : "200px",
-            height: "150px",
-            zIndex: 2,
+          else {
+            user.style = {
+              bottom: "10px",
+              right: 10 * index + 200 * (index - 1) + "px",
+              width : "200px",
+              height: "150px",
+              zIndex: 2,
+            }
           }
-        }
-      });
+          Vue.set(this.users, index, user);
+        });
+      }
+      else {
+        this.users.forEach((user, index) => {
+          if (index == 0) {
+            user.style = {
+              top: "0px",
+              left: "0px",
+              width: "50%",
+              height: "100%",
+              zIndex: 1,
+            }
+          }
+          else {
+            user.style = {
+              bottom: "10px",
+              right: 10 * index + 200 * (index - 1) + "px",
+              width : "200px",
+              height: "150px",
+              zIndex: 2,
+            }
+          }
+          Vue.set(this.users, index, user);
+        });
+      }
     },
     create_user: function(peerId) {
       return {
@@ -72,28 +107,6 @@ var vm = new Vue({
       this.users = this.users.filter(user => user.peerId != peerId);
       this.calc_layout();
     },
-    add_peer: function(peerId, peer) {
-      this.peers.push({
-        id: peerId,
-        peer: peer
-      })
-    },
-    del_peer: function(peerId) {
-      this.peers = this.peers.filter(peer => peer.id != peerId);
-    },
-    add_stream: function(peerId, stream) {
-      this.streams.push({
-        id: peerId,
-        stream: stream,
-        style: {
-          top: 0,
-          left: 0,
-        }
-      })
-    },
-    del_stream: function(peerId) {
-      this.streams = this.streams.filter(stream => stream.id != peerId);
-    }
   },
   data: {
     users: [],
@@ -105,8 +118,32 @@ var vm = new Vue({
       device : [],
       using: null,
     },
-    peers: [],  // { id : "foo", peer   : obj } 
-    streams: [] // { id : "foo", stream : obj }
+    video_fill: {
+      mode : [
+        {
+          label: "Cover",
+          value: "cover",
+        },
+        {
+          label: "Contain",
+          value: "contain",
+        },
+      ],
+      using: "cover",
+    },
+    video_layout: {
+      mode: [
+        {
+          label: "PinP",
+          value: "pinp",
+        },
+        {
+          label: "Area",
+          value: "area",
+        },
+      ],
+      using: "pinp",
+    }
   },
   watch:{
       // users: function(users) {
@@ -128,15 +165,15 @@ var vm = new Vue({
       //     //             document.getElementById("foo").srcObject = vm.stream;
       //     //         })
       // },
-      streams: function(streams) {
-        Vue.nextTick().then(function () {
-          vm.streams.forEach( stream => {
-            if (document.getElementById(stream.id)) {
-              document.getElementById(stream.id).srcObject = stream.stream;
-            }
-          })
-        })
-      }
+      // streams: function(streams) {
+      //   Vue.nextTick().then(function () {
+      //     vm.streams.forEach( stream => {
+      //       if (document.getElementById(stream.id)) {
+      //         document.getElementById(stream.id).srcObject = stream.stream;
+      //       }
+      //     })
+      //   })
+      // }
   },
   directives: {
     source: {
