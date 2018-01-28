@@ -33,12 +33,13 @@
   <body>
     <div id="vue-app" class="container">
       <section class="video-container">
-        <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video>
+        <video v-for="user in visible_users" v-source="user.stream" :id="user.peerId" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video>
+        <!-- <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video> -->
 	<!-- <video v-for="stream in streams" v-if="stream.stream" :id="stream.id" :style="stream.style" autoplay playsinline></video> -->
 	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
       </section>
       <nav class="navbar fixed-bottom navbar-expand-md navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Bottom navbar</a>
+        <a class="navbar-brand" href="#">SkyWay + Vue.js</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>

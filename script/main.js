@@ -1,13 +1,18 @@
 var vm = new Vue({
   el: "#vue-app",
   computed: {
+    visible_users: function() {
+      return this.users.filter(user => user.stream);
+    }
   },
   methods: {
+    _dbg_trace_users: function() {
+      this.users.forEach(user => console.log(user.peerId))
+    },
     click_video: function(peerId) {
       let users = this.users.filter(user => user.peerId == peerId);
       this.users = users.concat(this.users.filter(user => user.peerId != peerId));
       this.calc_layout();
-      this.users.forEach(user => console.log(user.peerId))
     },
     formatted_user: function(user) {
       return `user.peerId:${user.peerId}`;
