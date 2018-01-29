@@ -22,33 +22,32 @@
         position: relative;
         overflow: hidden;
       }
-      .video-stream {
+      .video-frame {
         width: 100%;
         height: 100%;
-        position: relative;
+        position: absolute;
         overflow: hidden;
       }
-      .video-fill-cover {
-        object-fit: cover;
-      }
       video {
-        position: absolute;
         height: 100%;
         width: 100%;
         background-color: dimgray
+      }
+      video.cover {
+        object-fit: cover;
       }
     </style>
   </head>
   <body>
     <div id="vue-app" class="container">
       <div class="video-container">
-        <div class="video-stream" v-for="user in visible_users" :user="user">
-          <video v-source="user.stream" :class="video_fill_class" :id="user.peerId" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video>
+        <div class="video-frame" v-for="user in visible_users" :user="user" :style="user.style">
+          <video v-source="user.stream" :class="is_using_cover" :id="user.peerId" @click="click_video(user.peerId)" autoplay playsinline></video>
         </div>
         <!-- <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video> -->
       	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
       </div>
-      <nav class="navbar fixed-bottom navbar-expand-md navbar-dark bg-dark">
+      <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
         <a class="navbar-brand" href="#">SkyWay + Vue.js</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>

@@ -4,8 +4,8 @@ var vm = new Vue({
     visible_users: function() {
       return this.users.filter(user => user.stream);
     },
-    video_fill_class: function() {
-      return { "video-fill-cover" : this.video_fill.using == "cover" }
+    is_using_cover: function() {
+      return { "video cover" : this.video_fill.using == "cover" }
     }
   },
   methods: {
@@ -42,6 +42,7 @@ var vm = new Vue({
               left: "0px",
               width: "100%",
               height: "100%",
+              position: "absolute",
               zIndex: 1,
             }
           }
@@ -51,6 +52,7 @@ var vm = new Vue({
               right: 10 * index + 200 * (index - 1) + "px",
               width : "200px",
               height: "150px",
+              position: "absolute",
               zIndex: 2,
             }
           }
@@ -58,27 +60,76 @@ var vm = new Vue({
         });
       }
       else {
-        this.users.forEach((user, index) => {
-          if (index == 0) {
-            user.style = {
-              top: "0px",
-              left: "0px",
-              width: "50%",
-              height: "100%",
-              zIndex: 1,
+        if (this.users.length <= 2) {
+          this.users.forEach((user, index) => {
+            if (index == 0) {
+              user.style = {
+                top: "0px",
+                left: "0px",
+                width: "50%",
+                height: "100%",
+                position: "absolute",
+                zIndex: 1,
+              }
             }
-          }
-          else {
-            user.style = {
-              bottom: "10px",
-              right: 10 * index + 200 * (index - 1) + "px",
-              width : "200px",
-              height: "150px",
-              zIndex: 2,
+            else {
+              user.style = {
+                top: "0px",
+                left: "50%",
+                width: "50%",
+                height: "100%",
+                position: "absolute",
+                zIndex: 1,
+              }
             }
+            Vue.set(this.users, index, user);
+          });
+        }
+        else if (this.users.length <= 4) {
+          let x = 0;
+          let y = 0;
+          let d = 2;
+          user = this.users[0];
+          user.style = {
+            top: "0px",
+            left: "0px",
+            width: "50%",
+            height: "50%",
+            position: "absolute",
+            zIndex: 1,
           }
-          Vue.set(this.users, index, user);
-        });
+          Vue.set(this.users, 0, user);
+          user = this.users[1];
+          user.style = {
+            top: "0px",
+            left: "50%",
+            width: "50%",
+            height: "50%",
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 1, user);
+          user = this.users[2];
+          user.style = {
+            top: "50%",
+            left: "0%",
+            width: "50%",
+            height: "50%",
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 2, user);
+          user = this.users[3];
+          user.style = {
+            top: "50%",
+            left: "50%",
+            width: "50%",
+            height: "50%",
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 3, user);
+        }
       }
     },
     create_user: function(peerId) {
