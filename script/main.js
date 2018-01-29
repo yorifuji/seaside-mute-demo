@@ -60,75 +60,65 @@ var vm = new Vue({
         });
       }
       else {
-        if (this.users.length <= 2) {
-          this.users.forEach((user, index) => {
-            if (index == 0) {
-              user.style = {
-                top: "0px",
-                left: "0px",
-                width: "50%",
-                height: "100%",
-                position: "absolute",
-                zIndex: 1,
-              }
-            }
-            else {
-              user.style = {
-                top: "0px",
-                left: "50%",
-                width: "50%",
-                height: "100%",
-                position: "absolute",
-                zIndex: 1,
-              }
-            }
-            Vue.set(this.users, index, user);
-          });
+        if (this.users.length == 1) {
+          user = this.users[0];
+          user.style = {
+            top: "0px",
+            left: "0px",
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 0, user);
         }
-        else if (this.users.length <= 4) {
-          let x = 0;
-          let y = 0;
-          let d = 2;
+        if (this.users.length == 2) {
           user = this.users[0];
           user.style = {
             top: "0px",
             left: "0px",
             width: "50%",
-            height: "50%",
+            height: "100%",
             position: "absolute",
             zIndex: 1,
           }
           Vue.set(this.users, 0, user);
+
           user = this.users[1];
           user.style = {
             top: "0px",
             left: "50%",
             width: "50%",
-            height: "50%",
+            height: "100%",
             position: "absolute",
             zIndex: 1,
           }
           Vue.set(this.users, 1, user);
-          user = this.users[2];
-          user.style = {
-            top: "50%",
-            left: "0%",
-            width: "50%",
-            height: "50%",
-            position: "absolute",
-            zIndex: 1,
+        }
+        else if (this.users.length <= 16) {
+          let d = 0;
+          for (i = 0; i < 4; i++) {
+            if (i * i >= this.users.length) {
+              d = i;
+              break;
+            }
           }
-          Vue.set(this.users, 2, user);
-          user = this.users[3];
-          user.style = {
-            top: "50%",
-            left: "50%",
-            width: "50%",
-            height: "50%",
-            position: "absolute",
-            zIndex: 1,
+          y = 0;
+          x = 0;
+          for (i = 0; i < this.users.length; i++) {
+            if (i != 0 && i % d == 0) y++;
+            x = (i % d);
+            user = this.users[i];
+            user.style = {
+              top:    y * 100 / d + "%",
+              left:   x * 100 / d + "%",
+              width:  100 / d + "%",
+              height: 100 / d + "%",
+              position: "absolute",
+              zIndex: 1,
+            }
+            Vue.set(this.users, i, user);
           }
-          Vue.set(this.users, 3, user);
         }
       }
     },
@@ -177,8 +167,8 @@ var vm = new Vue({
           value: "cover",
         },
         {
-          label: "Contain",
-          value: "contain",
+          label: "Normal",
+          value: "normal",
         },
       ],
       using: "cover",
@@ -190,8 +180,8 @@ var vm = new Vue({
           value: "pinp",
         },
         {
-          label: "Area",
-          value: "area",
+          label: "Grid",
+          value: "grid",
         },
       ],
       using: "pinp",
