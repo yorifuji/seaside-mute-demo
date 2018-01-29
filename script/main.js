@@ -28,6 +28,7 @@ var vm = new Vue({
     },
     select_video_layout: function(mode) {
       this.video_layout.using = mode;
+      this.calc_layout();
     },
     formatted_user: function(user) {
       return `user.peerId:${user.peerId}`;
