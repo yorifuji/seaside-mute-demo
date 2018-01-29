@@ -160,6 +160,44 @@ var vm = new Vue({
       device : [],
       using: null,
     },
+    video_quality : {
+      size: [
+        {
+          label: "1280 x 960",
+          value: "1280x960",
+        },
+        {
+          label: "640 x 480",
+          value: "640x480",
+        },
+        {
+          label: "320 x 240",
+          value: "320x240",
+        },
+      ],
+      fps: [
+        {
+          label: "30 fps",
+          value: "30",
+        },
+        {
+          label: "15 fps",
+          value: "15",
+        },
+        {
+          label: "10 fps",
+          value: "10",
+        },
+        {
+          label: "5 fps",
+          value: "5",
+        },
+        {
+          label: "1 fps",
+          value: "1",
+        },
+      ]
+    },
     video_fill: {
       mode : [
         {
