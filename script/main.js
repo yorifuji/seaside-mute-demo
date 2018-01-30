@@ -13,9 +13,15 @@ var vm = new Vue({
       this.users.forEach(user => console.log(user.peerId))
     },
     click_video: function(peerId) {
+      if (this.users.length <= 1) return;
       let users = this.users.filter(user => user.peerId == peerId);
-      this.users = users.concat(this.users.filter(user => user.peerId != peerId));
-//      this.calc_layout();
+      for (i = 0; i < this.users.length; i++) {
+        if (this.users[i].peerId != peerId) {
+          users.push(this.users[i]);
+        }
+      }
+      this.users = users;
+      this.calc_layout();
     },
     select_mic: function(device) {
       console.log(device)
