@@ -15,6 +15,7 @@
       .container {
         margin: 0px;
         padding: 0px;
+        max-width: initial;
       }
       .video-container {
         width: 100%;
@@ -36,6 +37,9 @@
       video.cover {
         object-fit: cover;
       }
+      span.nav-link, button.dropdown-item {
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -48,27 +52,18 @@
       	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
       </div>
       <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
-        <!-- <a class="navbar-brand" href="#">SkyWay + Vue.js</a> -->
+        <span class="navbar-brand">SkyWay + Vue.js</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
-            <!-- <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">Disabled</a>
-            </li> -->
             <li class="nav-item dropup">
-              <a class="nav-link dropdown-toggle" href="https://getbootstrap.com" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layout</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <a class="dropdown-item" href="#" v-for="mode in video_layout.mode" @click="select_video_layout(mode.value)">{{ mode.label }}</a>
+              <span class="nav-link dropdown-toggle" id="dropdown_layout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layout</span>
+              <div class="dropdown-menu" aria-labelledby="dropdown_layout">
+                <button type="button" class="dropdown-item" v-for="mode in video_layout.mode" :class="{active : mode.value == video_layout.using}" @click="select_video_layout(mode.value)">{{ mode.label }}</button>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" v-for="mode in video_fill.mode" @click="select_video_fill(mode.value)">{{ mode.label }}</a>
+                <button type="button" class="dropdown-item" v-for="mode in video_fill.mode" :class="{active : mode.value == video_fill.using}" @click="select_video_fill(mode.value)">{{ mode.label }}</button>
               </div>
             </li>
             <!-- <li class="nav-item dropup">
@@ -77,24 +72,24 @@
                 <a class="dropdown-item" href="#" v-for="mode in video_fill.mode" @click="select_video_fill(mode.value)">{{ mode.label }}</a>
               </div>
             </li> -->
-            <li class="nav-item dropup">
+            <!-- <li class="nav-item dropup">
               <a class="nav-link dropdown-toggle" href="https://getbootstrap.com" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Video</a>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
                 <a class="dropdown-item" href="#" v-for="size in video_quality.size" @click="">{{ size.label }}</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" v-for="fps in video_quality.fps" @click="">{{ fps.label }}</a>
               </div>
-            </li>
+            </li> -->
             <li class="nav-item dropup">
-              <a class="nav-link dropdown-toggle" href="https://getbootstrap.com" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Camera</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <a class="dropdown-item" href="#" v-for="camera in camera.device" @click="select_camera(camera)">{{ camera.label }}</a>
+              <span class="nav-link dropdown-toggle" id="dropdown_camera" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Camera</span>
+              <div class="dropdown-menu" aria-labelledby="dropdown_camera">
+                <button type="button" class="dropdown-item" v-for="camera in camera.device" @click="select_camera(camera)">{{ camera.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
-              <a class="nav-link dropdown-toggle" href="https://getbootstrap.com" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Microphone</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <a class="dropdown-item" href="#" v-for="mic in microphone.device" @click="select_mic(mic)">{{ mic.label }}</a>
+              <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Microphone</span>
+              <div class="dropdown-menu" aria-labelledby="dropdown_microphone">
+                <button type="button" class="dropdown-item" v-for="mic in microphone.device" @click="select_mic(mic)">{{ mic.label }}</button>
               </div>
             </li>
           </ul>
@@ -126,7 +121,7 @@
       $(window).on('load resize', function(){
         $(".container").width(window.innerWidth);
         $(".container").height(window.innerHeight - $(".navbar").outerHeight());
-        $(".container").css('max-width',window.innerWidth); // to clear bootsrap css
+        // $(".container").css('max-width','initial'); // to clear bootsrap css
       });
     </script>
 
