@@ -12,13 +12,13 @@ $(function() {
     debug: 3,
   });
 
-  let localStream;
   let room;
   peer.on('open', id => {
     $('#my-id').text(peer.id);
     // Get things started
+    vm.skyway.peer = peer;
     vm.join_user(id);
-    step1();
+    step1({ video : true, audio : true });
   });
 
   peer.on('error', err => {
@@ -26,18 +26,14 @@ $(function() {
     // Return to step 2 if error occurs
   });
 
-  function make_call(roomName) {
-    room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: localStream});
-  }
-
   function room_close() {
     room.close();
   }
 
   // set up audio and video input selectors
-  const audioSelect = $('#audioSource');
-  const videoSelect = $('#videoSource');
-  const selectors = [audioSelect, videoSelect];
+  // const audioSelect = $('#audioSource');
+  // const videoSelect = $('#videoSource');
+  // const selectors = [audioSelect, videoSelect];
 
   navigator.mediaDevices.enumerateDevices()
     .then(deviceInfos => {
@@ -58,7 +54,7 @@ $(function() {
       }
     });
 
-  function step1() {
+  function step1(constraints) {
     // Get audio/video stream
 
     // const audioSource = $('#audioSource').val();
@@ -68,11 +64,11 @@ $(function() {
     //   video: {deviceId: videoSource ? {exact: videoSource} : undefined},
     // };
 
-    const constraints = { video : true, audio : true };
+    // const constraints = { video : true, audio : true };
+
     navigator.mediaDevices.getUserMedia(constraints).then(stream => {
       console.log(stream);
 
-      localStream = stream;
       vm.set_stream(peer.id, stream);
 
       if (room) {
@@ -81,7 +77,8 @@ $(function() {
       }
 
       const roomName = "room1";
-      room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: localStream});
+      room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: stream});
+      vm.skyway.room = room;
       step3(room);
 
     }).catch(err => {

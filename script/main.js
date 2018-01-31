@@ -160,6 +160,11 @@ var vm = new Vue({
   },
   data: {
     users: [],
+    skyway: {
+      peer: null,
+      stream: null,
+      room: null,
+    },
     microphone: {
       device : [],
       using: null,
