@@ -24,10 +24,12 @@ var vm = new Vue({
       this.calc_layout();
     },
     select_mic: function(device) {
-      console.log(device)
+      console.log(device);
+      this.microphone.using = device;
     },
     select_camera: function(device) {
       console.log(device)
+      this.camera.using = device;
     },
     select_video_fill: function(mode) {
       this.video_fill.using = mode;

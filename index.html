@@ -83,13 +83,13 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_camera" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Camera</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_camera">
-                <button type="button" class="dropdown-item" v-for="camera in camera.device" @click="select_camera(camera)">{{ camera.label }}</button>
+                <button type="button" class="dropdown-item" v-for="cam in camera.device" :class="{active : cam == camera.using}" @click="select_camera(cam)">{{ cam.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Microphone</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_microphone">
-                <button type="button" class="dropdown-item" v-for="mic in microphone.device" @click="select_mic(mic)">{{ mic.label }}</button>
+                <button type="button" class="dropdown-item" v-for="mic in microphone.device" :class="{active : mic == microphone.using}" @click="select_mic(mic)">{{ mic.label }}</button>
               </div>
             </li>
           </ul>

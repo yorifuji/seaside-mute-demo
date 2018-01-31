@@ -50,6 +50,12 @@ $(function() {
           vm.camera.device.push(deviceInfo)
         }
       }
+      if (vm.microphone.device.length) {
+        vm.microphone.using = vm.microphone.device[0];
+      }
+      if (vm.camera.device.length) {
+        vm.camera.using = vm.camera.device[0];
+      }
     });
 
   function step1() {
