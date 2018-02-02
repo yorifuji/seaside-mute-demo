@@ -182,6 +182,9 @@ var vm = new Vue({
           this.skyway.room.replaceStream(stream);
           return;
         }
+        else {
+          this.enumrate_media_devices();
+        }
   
         const roomName = "room1";
         this.skyway.room = this.skyway.peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: stream});
@@ -340,7 +343,6 @@ var vm = new Vue({
     this.skyway.peer.on('open', id => {
       this.join_user(id);
       this.step1({ video : true, audio : true });
-      this.enumrate_media_devices();
     });
 
     this.skyway.peer.on('error', err => {
