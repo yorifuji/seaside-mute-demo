@@ -162,6 +162,12 @@ var vm = new Vue({
       }
       this.calc_layout();
     },
+    remove_stream: function(peerId, stream) {
+      this.users.forEach(user => {
+        if (user.peerId == peerId && user.stream == stream) user.stream = null;
+      });
+      this.calc_layout();
+    },
     join_user: function(peerId) {
       this.users.push(this.create_user(peerId));
       this.calc_layout();
@@ -199,14 +205,12 @@ var vm = new Vue({
       // Wait for stream on the call, then set peer video display
       room.on('stream', stream => {
         console.log(stream);
-        const peerId = stream.peerId;
-        this.set_stream(peerId, stream);
+        this.set_stream(stream.peerId, stream);
       });
   
       room.on('removeStream', stream => {
         console.log(stream);
-        const peerId = stream.peerId;
-        this.leave_user(peerId);
+        this.remove_stream(stream.peerId, stream);
       });
   
       room.on('peerJoin', peerId => {
