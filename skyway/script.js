@@ -1,113 +1,114 @@
 /* eslint-disable require-jsdoc */
 $(function() {
-  // check API KEY
-  if (!window.hasOwnProperty("__SKYWAY_KEY__") || window.__SKYWAY_KEY__ == "__SKYWAY_KEY__") {
-    alert("Please set your API KEY to window.__SKYWAY_KEY__")
-    return;
-  }
+  // // check API KEY
+  // if (!window.hasOwnProperty("__SKYWAY_KEY__") || window.__SKYWAY_KEY__ == "__SKYWAY_KEY__") {
+  //   alert("Please set your API KEY to window.__SKYWAY_KEY__")
+  //   return;
+  // }
 
-  // Peer object
-  const peer = new Peer({
-    key:   window.__SKYWAY_KEY__,
-    debug: 3,
-  });
+  // // Peer object
+  // const peer = new Peer({
+  //   key:   window.__SKYWAY_KEY__,
+  //   debug: 3,
+  // });
 
-  let room;
-  peer.on('open', id => {
-    $('#my-id').text(peer.id);
-    // Get things started
-    vm.skyway.peer = peer;
-    vm.join_user(id);
-    step1({ video : true, audio : true });
-  });
+  // let room;
+  // peer.on('open', id => {
+  //   // Get things started
+  //   vm.skyway.peer = peer;
+  //   vm.join_user(id);
+  //   step1({ video : true, audio : true });
+  //   enumrate_media_devices();
+  // });
 
-  peer.on('error', err => {
-    alert(err.message);
-    // Return to step 2 if error occurs
-  });
+  // peer.on('error', err => {
+  //   alert(err.message);
+  //   // Return to step 2 if error occurs
+  // });
 
-  function room_close() {
-    room.close();
-  }
+  // let room;
 
-  // set up audio and video input selectors
-  // const audioSelect = $('#audioSource');
-  // const videoSelect = $('#videoSource');
-  // const selectors = [audioSelect, videoSelect];
+  // function room_close() {
+  //   room.close();
+  // }
 
-  navigator.mediaDevices.enumerateDevices()
-    .then(deviceInfos => {
-	    for (let i = 0; i !== deviceInfos.length; ++i) {
-	      console.log(deviceInfos[i])
-        const deviceInfo = deviceInfos[i];
-        if (deviceInfo.kind === 'audioinput') {
-          vm.microphone.device.push(deviceInfo)
-        } else if (deviceInfo.kind === 'videoinput') {
-          vm.camera.device.push(deviceInfo)
-        }
-      }
-      if (vm.microphone.device.length) {
-        vm.microphone.using = vm.microphone.device[0];
-      }
-      if (vm.camera.device.length) {
-        vm.camera.using = vm.camera.device[0];
-      }
-    });
+  // function enumrate_media_devices() {
+  //   vm.microphone.device = []
+  //   vm.microphone.using = null;
+  //   vm.camera.device = []
+  //   vm.camera.using = null;
+  //   navigator.mediaDevices.enumerateDevices()
+  //     .then(deviceInfos => {
+  //       for (let i = 0; i !== deviceInfos.length; ++i) {
+  //         console.log(deviceInfos[i])
+  //         const deviceInfo = deviceInfos[i];
+  //         if (deviceInfo.kind === 'audioinput') {
+  //           vm.microphone.device.push(deviceInfo)
+  //         } else if (deviceInfo.kind === 'videoinput') {
+  //           vm.camera.device.push(deviceInfo)
+  //         }
+  //       }
+  //       if (vm.microphone.device.length) {
+  //         vm.microphone.using = vm.microphone.device[0];
+  //       }
+  //       if (vm.camera.device.length) {
+  //         vm.camera.using = vm.camera.device[0];
+  //       }
+  //     });
+  // }
 
-  function step1(constraints) {
-    // Get audio/video stream
+  // const constraints = {
+  //   audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
+  //   video: {deviceId: videoSource ? {exact: videoSource} : undefined},
+  // };
 
-    // const audioSource = $('#audioSource').val();
-    // const videoSource = $('#videoSource').val();
-    // const constraints = {
-    //   audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
-    //   video: {deviceId: videoSource ? {exact: videoSource} : undefined},
-    // };
+  // function step1(constraints) {
+  //   // Get audio/video stream
 
-    // const constraints = { video : true, audio : true };
+  //   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+  //     console.log(stream);
+  //     vm.set_stream(peer.id, stream);
 
-    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-      console.log(stream);
+  //     if (room) {
+  //       room.replaceStream(stream);
+  //       return;
+  //     }
 
-      vm.set_stream(peer.id, stream);
+  //     const roomName = "room1";
+  //     room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: stream});
+  //     vm.skyway.room = room;
+  //     step3(room);
 
-      if (room) {
-        room.replaceStream(stream);
-        return;
-      }
+  //   }).catch(err => {
+  //     console.error(err);
+  //   });
+  // }
 
-      const roomName = "room1";
-      room = peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: stream});
-      vm.skyway.room = room;
-      step3(room);
+  // function step3(room) {
+  //   // Wait for stream on the call, then set peer video display
+  //   room.on('stream', stream => {
+  //     console.log(stream);
+  //     const peerId = stream.peerId;
+  //     vm.set_stream(peerId, stream);
+  //   });
 
-    }).catch(err => {
-      console.error(err);
-    });
-  }
+  //   room.on('removeStream', stream => {
+  //     console.log(stream);
+  //     const peerId = stream.peerId;
+  //     vm.leave_user(peerId);
+  //   });
 
-  function step3(room) {
-    // Wait for stream on the call, then set peer video display
-    room.on('stream', stream => {
-      console.log(stream);
-      const peerId = stream.peerId;
-      vm.set_stream(peerId, stream);
-    });
+  //   room.on('peerJoin', peerId => {
+  //     console.log(peerId);
+  //     vm.join_user(peerId);
+  //   })
 
-    room.on('removeStream', stream => {
-      const peerId = stream.peerId;
-      vm.leave_user(peerId);
-    });
+  //   room.on('peerLeave', peerId => {
+  //     console.log(peerId);
+  //     vm.leave_user(peerId);
+  //   });
 
-    room.on('peerJoin', peerId => {
-      vm.join_user(peerId);
-    })
-
-    room.on('peerLeave', peerId => {
-      vm.leave_user(peerId);
-    });
-
-    room.on('close', () => {
-    });
-  }
+  //   room.on('close', () => {
+  //   });
+  // }
 });

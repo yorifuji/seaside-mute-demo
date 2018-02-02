@@ -46,7 +46,7 @@
     <div id="vue-app" class="container">
       <div class="video-container">
         <div class="video-frame" v-for="user in visible_users" :user="user" :style="user.style">
-          <video v-source="user.stream" :class="is_using_cover" :id="user.peerId" @click="click_video(user.peerId)" autoplay playsinline></video>
+          <video v-source="user.stream" :class="is_using_cover" :id="user.peerId" :key="user.peerId" @click="click_video(user.peerId)" autoplay playsinline></video>
         </div>
         <!-- <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video> -->
       	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
@@ -59,7 +59,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_layout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layout</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_layout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="disabled_item">Layout</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
                 <button type="button" class="dropdown-item" v-for="mode in video_layout.mode" :class="{active : mode.value == video_layout.using}" @click="select_video_layout(mode.value)">{{ mode.label }}</button>
                 <div class="dropdown-divider"></div>
@@ -81,13 +81,13 @@
               </div>
             </li> -->
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_camera" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Camera</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_camera" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="disabled_item">Camera</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_camera">
                 <button type="button" class="dropdown-item" v-for="cam in camera.device" :class="{active : cam == camera.using}" @click="select_camera(cam)">{{ cam.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Microphone</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="disabled_item">Microphone</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_microphone">
                 <button type="button" class="dropdown-item" v-for="mic in microphone.device" :class="{active : mic == microphone.using}" @click="select_mic(mic)">{{ mic.label }}</button>
               </div>
@@ -110,13 +110,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+    <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+    <script type="text/javascript" src="./skyway/key.js"></script>
+    <!-- <script type="text/javascript" src="./skyway/script.js"></script> -->
+
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue" type="text/javascript"></script> -->
     <script type="text/javascript" src="./script/vue.js"></script>
     <script type="text/javascript" src="./script/main.js"></script>
 
-    <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
-    <script type="text/javascript" src="./skyway/key.js"></script>
-    <script type="text/javascript" src="./skyway/script.js"></script>
     <script type="text/javascript">
       $(window).on('load resize', function(){
         $(".container").width(window.innerWidth);

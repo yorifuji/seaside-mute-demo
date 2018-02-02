@@ -6,6 +6,9 @@ var vm = new Vue({
     },
     is_using_cover: function() {
       return { "video cover" : this.video_fill.using == "cover" }
+    },
+    disabled_item: function() {
+      return this.skyway.peer ? {disabled : false} : {disabled : true};
     }
   },
   methods: {
@@ -26,10 +29,20 @@ var vm = new Vue({
     select_mic: function(device) {
       console.log(device);
       this.microphone.using = device;
+      const constraints = {
+        audio: {deviceId: this.microphone.using ? this.microphone.using.deviceId : false},
+        video: {deviceId: this.camera.using     ? this.camera.using.deviceId     : false},
+      };
+      this.step1(constraints);
     },
     select_camera: function(device) {
       console.log(device)
       this.camera.using = device;
+      const constraints = {
+        audio: {deviceId: this.microphone.using ? this.microphone.using.deviceId : false},
+        video: {deviceId: this.camera.using     ? this.camera.using.deviceId     : false},
+      };
+      this.step1(constraints);
     },
     select_video_fill: function(mode) {
       this.video_fill.using = mode;
@@ -157,6 +170,79 @@ var vm = new Vue({
       this.users = this.users.filter(user => user.peerId != peerId);
       this.calc_layout();
     },
+
+    step1: function (constraints) {
+      // Get audio/video stream
+  
+      navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+        console.log(stream);
+        this.set_stream(this.skyway.peer.id, stream);
+  
+        if (this.skyway.room) {
+          this.skyway.room.replaceStream(stream);
+          return;
+        }
+  
+        const roomName = "room1";
+        this.skyway.room = this.skyway.peer.joinRoom('sfu_video_' + roomName, {mode: 'sfu', stream: stream});
+
+        this.step3(this.skyway.room);
+  
+      }).catch(err => {
+        console.error(err);
+      });
+    },
+    step3: function(room) {
+      // Wait for stream on the call, then set peer video display
+      room.on('stream', stream => {
+        console.log(stream);
+        const peerId = stream.peerId;
+        this.set_stream(peerId, stream);
+      });
+  
+      room.on('removeStream', stream => {
+        console.log(stream);
+        const peerId = stream.peerId;
+        this.leave_user(peerId);
+      });
+  
+      room.on('peerJoin', peerId => {
+        console.log(peerId);
+        this.join_user(peerId);
+      })
+  
+      room.on('peerLeave', peerId => {
+        console.log(peerId);
+        this.leave_user(peerId);
+      });
+  
+      room.on('close', () => {
+      });
+    },
+    enumrate_media_devices: function() {
+      this.microphone.device = []
+      this.microphone.using = null;
+      this.camera.device = []
+      this.camera.using = null;
+      navigator.mediaDevices.enumerateDevices()
+        .then(deviceInfos => {
+          for (let i = 0; i !== deviceInfos.length; ++i) {
+            console.log(deviceInfos[i])
+            const deviceInfo = deviceInfos[i];
+            if (deviceInfo.kind === 'audioinput') {
+              this.microphone.device.push(deviceInfo)
+            } else if (deviceInfo.kind === 'videoinput') {
+              this.camera.device.push(deviceInfo)
+            }
+          }
+          if (this.microphone.device.length) {
+            this.microphone.using = this.microphone.device[0];
+          }
+          if (this.camera.device.length) {
+            this.camera.using = this.camera.device[0];
+          }
+        });
+    }
   },
   data: {
     users: [],
@@ -237,6 +323,31 @@ var vm = new Vue({
       ],
       using: "pinp",
     }
+  },
+  mounted: function() {
+    // check API KEY
+    if (!window.hasOwnProperty("__SKYWAY_KEY__") || window.__SKYWAY_KEY__ == "__SKYWAY_KEY__") {
+      alert("Please set your API KEY to window.__SKYWAY_KEY__")
+      return;
+    }
+
+    // Peer object
+    this.skyway.peer = new Peer({
+      key:   window.__SKYWAY_KEY__,
+      debug: 3,
+    });
+
+    this.skyway.peer.on('open', id => {
+      this.join_user(id);
+      this.step1({ video : true, audio : true });
+      this.enumrate_media_devices();
+    });
+
+    this.skyway.peer.on('error', err => {
+      alert(err.message);
+      // Return to step 2 if error occurs
+    });
+
   },
   watch:{
       // users: function(users) {
