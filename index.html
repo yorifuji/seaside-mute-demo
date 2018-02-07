@@ -68,7 +68,7 @@
               </div>
             </li>
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_video" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="disabled_item">Video</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_video" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Video</span>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
                 <button type="button" class="dropdown-item" v-for="mode in video.codec.mode" :class="{active : mode == video.codec.using}" @click="select_codec(mode)">{{ mode.label }}</button>
                 <div class="dropdown-divider"></div>
@@ -78,19 +78,19 @@
               </div>
             </li>
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_camera" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="disabled_item">Camera</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_camera" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Camera</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_camera">
                 <button type="button" class="dropdown-item" v-for="cam in camera.device" :class="{active : cam == camera.using}" @click="select_camera(cam)">{{ cam.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="disabled_item">Microphone</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Microphone</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_microphone">
                 <button type="button" class="dropdown-item" v-for="mic in microphone.device" :class="{active : mic == microphone.using}" @click="select_mic(mic)">{{ mic.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_layout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="disabled_item">Layout</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_layout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layout</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
                 <button type="button" class="dropdown-item" v-for="mode in layout.mode" :class="{active : mode.value == layout.using}" @click="select_layout(mode.value)">{{ mode.label }}</button>
                 <div class="dropdown-divider"></div>

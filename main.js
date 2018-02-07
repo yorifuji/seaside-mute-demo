@@ -11,7 +11,7 @@ var vm = new Vue({
       return { "video cover": this.renderer.using == "cover" }
     },
     disabled_item: function () {
-      return this.skyway.call || this.skyway.room ? { disabled: true } : { disabled: false };
+      return this.skyway.call || this.skyway.room ? { disabled: false } : { disabled: true };
     },
     is_online: function () {
       return this.skyway.call || this.skyway.room;
