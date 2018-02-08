@@ -341,6 +341,8 @@ var vm = new Vue({
       });
     },
     enumrate_media_devices: function () {
+      let mic_old = this.microphone.using;
+      let cam_old = this.camera.using;
       this.microphone.device = []
       this.microphone.using = null;
       this.camera.device = []
@@ -356,11 +358,29 @@ var vm = new Vue({
               this.camera.device.push(deviceInfo)
             }
           }
-          if (this.microphone.device.length) {
-            this.microphone.using = this.microphone.device[0];
+          if (mic_old) {
+            for (i = 0; i < this.microphone.device.length; i++) {
+              if (mic_old.deviceId == this.microphone.device[i].deviceId) {
+                this.microphone.using = this.microphone.device[i];
+              }
+            }
           }
-          if (this.camera.device.length) {
-            this.camera.using = this.camera.device[0];
+          else {
+            if (this.microphone.device.length) {
+              this.microphone.using = this.microphone.device[0];
+            }
+          }
+          if (cam_old) {
+            for (i = 0; i < this.camera.device.length; i++) {
+              if (cam_old.deviceId == this.camera.device[i].deviceId) {
+                this.camera.using = this.camera.device[i];
+              }
+            }
+          }
+          else {
+            if (this.camera.device.length) {
+              this.camera.using = this.camera.device[0];
+            }
           }
         })
         .catch(alert);
