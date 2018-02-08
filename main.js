@@ -222,7 +222,7 @@ var vm = new Vue({
       if (this.users.filter(user => user.peerId == peerId).length == 0) {
         let user = this.create_user(peerId);
         user.stream = stream;
-        this.users.push(user);
+        this.users.unshift(user);
       }
       else {
         this.users.forEach(user => {
@@ -238,7 +238,7 @@ var vm = new Vue({
       this.calc_layout();
     },
     join_user: function (peerId) {
-      this.users.push(this.create_user(peerId));
+      this.users.unshift(this.create_user(peerId));
       this.calc_layout();
     },
     leave_user: function (peerId) {
