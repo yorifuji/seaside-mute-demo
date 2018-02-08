@@ -261,14 +261,16 @@ var vm = new Vue({
         audio: { deviceId: this.microphone.using ? this.microphone.using.deviceId : true },
       }
       if (this.video.size.using) {
-        fmt.width = {
-          min: this.video.size.using.value.width,
-          max: this.video.size.using.value.width,
-        }
-        fmt.height = {
-          min: this.video.size.using.value.height,
-          max: this.video.size.using.value.height,
-        }
+        // fmt.width = {
+        //   min: this.video.size.using.value.width,
+        //   max: this.video.size.using.value.width,
+        // }
+        // fmt.height = {
+        //   min: this.video.size.using.value.height,
+        //   max: this.video.size.using.value.height,
+        // }
+        fmt.width  = this.video.size.using.value.width;
+        fmt.height = this.video.size.using.value.height;
       }
       // if (this.video.fps.using) {
       //   fmt.frameRate = {
