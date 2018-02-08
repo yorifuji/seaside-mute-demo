@@ -8,7 +8,7 @@ var vm = new Vue({
       return this.users.filter(user => user.stream);
     },
     styleCover: function () {
-      return { "video cover": this.renderer.using == "cover" }
+      return { "video cover": this.renderer.using.value == "cover" }
     },
     disabled_item: function () {
       return this.skyway.call || this.skyway.room ? { disabled: false } : { disabled: true };
@@ -17,15 +17,15 @@ var vm = new Vue({
       return this.skyway.call || this.skyway.room;
     },
     is_p2p: function() {
-      return this.skyway.conn_type.using == "p2p";
+      return this.skyway.conn_type.using.value == "p2p";
     },
   },
   methods: {
     _dbg_trace_users: function () {
       this.users.forEach(user => console.log(user.peerId))
     },
-    select_skyway_conntype: function (conn_type) {
-      this.skyway.conn_type.using = conn_type.value;
+    select_skyway_conntype: function (mode) {
+      this.skyway.conn_type.using = mode;
     },
     call: function () {
 
@@ -41,14 +41,12 @@ var vm = new Vue({
         return;
       }
     
-      if (this.skyway.conn_type.using == "p2p") {
+      if (this.skyway.conn_type.using.value == "p2p") {
 
         // setup params
         let params = {};
         if (this.video.codec.using) {
-          this.video.codec.mode.forEach(mode => {
-            if (mode.value == this.video.codec.using) params.videoCodec = mode.value;
-          });
+          params.videoCodec = this.video.codec.using.value;
         }
         _dtr(params);
 
@@ -58,7 +56,7 @@ var vm = new Vue({
 
         this.step4(this.skyway.call);
       }
-      else if (this.skyway.conn_type.using == "mesh") {
+      else if (this.skyway.conn_type.using.value == "mesh") {
         let options = { mode: 'mesh', stream: this.skyway.stream };
         if (this.video.codec.using) {
           this.video.codec.mode.forEach(mode => {
@@ -72,7 +70,7 @@ var vm = new Vue({
 
         this.step3(this.skyway.room);
       }
-      else if (this.skyway.conn_type.using == "sfu") {
+      else if (this.skyway.conn_type.using.value == "sfu") {
         let options = { mode: 'sfu', stream: this.skyway.stream };
         _dtr(options);
 
@@ -95,32 +93,17 @@ var vm = new Vue({
     },
     select_codec: function (mode) {
       console.log(mode)
-      for (i = 0; i < this.video.codec.mode.length; i++) {
-        if (this.video.codec.mode[i].label == mode.label) {
-          this.video.codec.using = this.video.codec.mode[i];
-          break;
-        }
-      }
+      this.video.codec.using = mode;
       this.step1(this.retrive_constraints());
     },
     select_size: function (mode) {
       console.log(mode)
-      for (i = 0; i < this.video.size.mode.length; i++) {
-        if (this.video.size.mode[i].label == mode.label) {
-          this.video.size.using = this.video.size.mode[i];
-          break;
-        }
-      }
+      this.video.size.using = mode;
       this.step1(this.retrive_constraints());
     },
     select_fps: function (mode) {
       console.log(mode)
-      for (i = 0; i < this.video.fps.mode.length; i++) {
-        if (this.video.fps.mode[i].label == mode.label) {
-          this.video.fps.using = this.video.fps.mode[i];
-          break;
-        }
-      }
+      this.video.fps.using = mode;
       this.step1(this.retrive_constraints());
     },
     select_camera: function (device) {
@@ -141,7 +124,7 @@ var vm = new Vue({
       this.calc_layout();
     },
     calc_layout: function () {
-      if (this.layout.using == "pinp") {
+      if (this.layout.using.value == "pinp") {
         this.users.forEach((user, index) => {
           if (index == 0) {
             user.style = {
@@ -472,7 +455,7 @@ var vm = new Vue({
           { label: "Mesh", value: "mesh" },
           { label: "SFU",  value: "sfu"  },
         ],
-        using: "p2p",
+        using: { label: "P2P", value: "p2p" }
       },
       peer: null,
       call: null,
@@ -525,14 +508,14 @@ var vm = new Vue({
         { label: "Cover",  value: "cover"  },
         { label: "Normal", value: "normal" },
       ],
-      using: "cover",
+      using: { label: "Cover", value: "cover" }
     },
     layout: {
       mode: [
         { label: "PinP", value: "pinp" },
         { label: "Grid", value: "grid" },
       ],
-      using: "pinp",
+      using: { label: "PinP", value: "pinp" }
     }
   },
 });
