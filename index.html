@@ -41,7 +41,7 @@
         cursor: pointer;
       }
       [v-cloak] {
-        display:none;
+        display: none;
       }
     </style>
   </head>
@@ -97,10 +97,13 @@
                 <button type="button" class="dropdown-item" v-for="mode in renderer.mode" :class="{active : mode.value == renderer.using.value}" @click="select_renderer(mode)">{{ mode.label }}</button>
               </div>
             </li>
+            <li class="nav-item dropup">
+              <span class="nav-link dropdown-toggle" id="dropdown_stats" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stats</span>
+              <div class="dropdown-menu" aria-labelledby="dropdown_layout">
+                <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_stats()">Output status on console</button>
+              </div>
+            </li>
           </ul>
-          <!-- <span class="navbar-brand" :class="{invisible : !is_p2p }" v-cloak>peerId</span>
-            <span class="navbar-brand" v-cloak>{{ skyway.peerId }}</span>
-          </span> -->
           <span class="navbar-brand" :class="{invisible : !is_p2p }" v-cloak>{{ skyway.peer ? skyway.peer.id  : "" }}</span>
           <form class="form-inline mt-2 mt-md-0" @submit.prevent="call">
             <input class="form-control mr-sm-2" type="text" :placeholder="is_p2p ? 'PeerID' : 'Room Name'" aria-label="call" v-model="skyway.callto" :readonly="is_online">
@@ -110,15 +113,6 @@
       </nav>
     </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-<!--
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-    <script src="../../../../assets/js/vendor/popper.min.js"></script>
-    <script src="../../../../dist/js/bootstrap.min.js"></script>
--->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -133,7 +127,6 @@
       $(window).on('load resize', function(){
         $(".container").width(window.innerWidth);
         $(".container").height(window.innerHeight - $(".navbar").outerHeight());
-        // $(".container").css('max-width','initial'); // to clear bootsrap css
       });
     </script>
 
