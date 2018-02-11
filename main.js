@@ -282,12 +282,12 @@ var vm = new Vue({
         fmt.width  = this.video.size.using.value.width;
         fmt.height = this.video.size.using.value.height;
       }
-      // if (this.video.fps.using) {
-      //   fmt.frameRate = {
-      //     min: this.video.fps.using.value,
-      //     max: this.video.fps.using.value,
-      //   }
-      // }
+      if (this.video.fps.using) {
+        fmt.frameRate = {
+          min: this.video.fps.using.value,
+          max: this.video.fps.using.value,
+        }
+      }
       return {
         video: fmt,
         audio: true
