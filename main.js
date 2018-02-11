@@ -1,3 +1,4 @@
+"use strict";
 
 let _dtr = console.log;
 
@@ -81,7 +82,7 @@ var vm = new Vue({
     click_video: function (peerId) {
       if (this.users.length <= 1) return;
       let users = this.users.filter(user => user.peerId == peerId);
-      for (i = 0; i < this.users.length; i++) {
+      for (let i = 0; i < this.users.length; i++) {
         if (this.users[i].peerId != peerId) {
           users.push(this.users[i]);
         }
@@ -160,7 +161,7 @@ var vm = new Vue({
       }
       else {
         if (this.users.length == 1) {
-          user = this.users[0];
+          let user = this.users[0];
           user.style = {
             top: "0px",
             left: "0px",
@@ -172,7 +173,7 @@ var vm = new Vue({
           Vue.set(this.users, 0, user);
         }
         if (this.users.length == 2) {
-          user = this.users[0];
+          let user = this.users[0];
           user.style = {
             top: "0px",
             left: "0px",
@@ -196,18 +197,18 @@ var vm = new Vue({
         }
         else if (this.users.length <= 16) {
           let d = 0;
-          for (i = 0; i < 4; i++) {
+          for (let i = 0; i < 4; i++) {
             if (i * i >= this.users.length) {
               d = i;
               break;
             }
           }
-          y = 0;
-          x = 0;
-          for (i = 0; i < this.users.length; i++) {
+          let y = 0;
+          let x = 0;
+          for (let i = 0; i < this.users.length; i++) {
             if (i != 0 && i % d == 0) y++;
             x = (i % d);
-            user = this.users[i];
+            let user = this.users[i];
             user.style = {
               top: y * 100 / d + "%",
               left: x * 100 / d + "%",
@@ -368,7 +369,7 @@ var vm = new Vue({
             }
           }
           if (mic_old) {
-            for (i = 0; i < this.microphone.device.length; i++) {
+            for (let i = 0; i < this.microphone.device.length; i++) {
               if (mic_old.deviceId == this.microphone.device[i].deviceId) {
                 this.microphone.using = this.microphone.device[i];
               }
@@ -380,7 +381,7 @@ var vm = new Vue({
             }
           }
           if (cam_old) {
-            for (i = 0; i < this.camera.device.length; i++) {
+            for (let i = 0; i < this.camera.device.length; i++) {
               if (cam_old.deviceId == this.camera.device[i].deviceId) {
                 this.camera.using = this.camera.device[i];
               }
@@ -410,13 +411,12 @@ var vm = new Vue({
     });
 
     this.skyway.peer.on('open', id => {
-      // this.join_user(id);
       this.step1({ video: true, audio: true });
     });
 
     this.skyway.peer.on('error', err => {
       alert(err.message);
-      // Return to step 2 if error occurs
+      this.skyway.call = null;
     });
 
     this.skyway.peer.on('call', call => {
@@ -441,6 +441,7 @@ var vm = new Vue({
       update(el, binding) {
         if (binding.value !== binding.oldValue) {
           el.srcObject = binding.value
+          el.play()
         }
       }
     }
@@ -571,8 +572,8 @@ async function getRTCStats(statsObject){
   let remoteCandidate = {};
   let inboundAudioCodec = {};
   let inboundVideoCodec = {};
-  let outboundAudioCode = {};
-  let outboundVideoCode = {};
+  let outboundAudioCodec = {};
+  let outboundVideoCodec = {};
 
   let stats = await statsObject;
   stats.forEach(stat => {
