@@ -92,17 +92,32 @@ var vm = new Vue({
     },
     select_codec: function (mode) {
       console.log(mode)
-      this.video.codec.using = mode;
+      if (this.video.codec.using == mode) {
+        this.video.codec.using = null;
+      }
+      else {
+        this.video.codec.using = mode;
+      }
       this.step1(this.retrive_constraints());
     },
     select_size: function (mode) {
       console.log(mode)
-      this.video.size.using = mode;
+      if (this.video.size.using == mode) {
+        this.video.size.using = null;
+      }
+      else {
+        this.video.size.using = mode;
+      }
       this.step1(this.retrive_constraints());
     },
     select_fps: function (mode) {
       console.log(mode)
-      this.video.fps.using = mode;
+      if (this.video.fps.using == mode) {
+        this.video.fps.using = null;
+      }
+      else {
+        this.video.fps.using = mode;
+      }
       this.step1(this.retrive_constraints());
     },
     select_camera: function (device) {
@@ -310,6 +325,7 @@ var vm = new Vue({
           this.enumrate_media_devices();
         }
       }).catch(err => {
+        alert(err.name);
         console.error(err);
       });
     },
