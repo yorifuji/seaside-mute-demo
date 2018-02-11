@@ -106,6 +106,12 @@
               </div>
             </li>
             <li class="nav-item dropup">
+              <span class="nav-link dropdown-toggle" id="dropdown_share" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Share</span>
+              <div class="dropdown-menu" aria-labelledby="dropdown_layout">
+                <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_screen_share()">{{ this.skyway.ss ? "Stop Screen Share" : "Start Screen Share"}}</button>
+              </div>
+            </li>
+            <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_stats" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled: is_mesh || is_sfu}">Stats</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
                 <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_stats()">Output status on console</button>
@@ -125,11 +131,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
-    <script src="./key.js"></script>
-
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.min.js"></script>
+
+    <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+    <script src="https://cdn.webrtc.ecl.ntt.com/screenshare-latest.js"></script>
+
+    <script src="./key.js"></script>
     <script src="./main.js"></script>
 
     <script type="text/javascript">

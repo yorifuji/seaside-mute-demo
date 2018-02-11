@@ -217,6 +217,67 @@ var vm = new Vue({
         }, 2000);
       }
     },
+    select_screen_share: function () {
+      _dtr(`select_screen_share:`);
+
+      if (this.skyway.ss) {
+        _dtr("stop screen share");
+        this.skyway.ss.stop();
+        this.skyway.ss = null;
+        // this.get_streams(this.skyway.peer.id).forEach(stream => stream && stream.getVideoTracks().forEach(track => track.stop()))
+        this.get_streams(this.skyway.peer.id).forEach(stream => stream && stream.getTracks().forEach(track => track.stop()))
+
+        this.set_stream(this.skyway.peer.id, new MediaStream(this.skyway.stream.getVideoTracks()));
+        if (this.skyway.call) {
+          this.skyway.call.replaceStream(this.skyway.stream);
+        }
+        else if (this.skyway.room) {
+          this.skyway.room.replaceStream(this.skyway.stream);
+        }
+        else {
+          _dtr("replace stream error.");
+        }
+    }
+      else {
+        this.skyway.ss = ScreenShare.create({debug: true});
+        if (!this.skyway.ss.isScreenShareAvailable()) {
+          alert("screen share is not allowed")
+          this.skyway.ss = null;
+          return;
+        };
+        this.skyway.ss.start({
+          // width:     1600,
+          // height:    1200,
+          frameRate: 10,
+        })
+        .then(stream => {
+          _dtr(stream)
+
+          // set screen share stream to self image
+          this.set_stream(this.skyway.peer.id, stream);
+
+          // make MediaStream for screen share with self audio
+          const ss_with_audio = new MediaStream(stream.getVideoTracks());
+          if (this.skyway.stream.getAudioTracks()) ss_with_audio.addTrack(this.skyway.stream.getAudioTracks()[0]);
+
+          if (this.skyway.call) {
+            this.skyway.call.replaceStream(ss_with_audio);
+          }
+          else if (this.skyway.room) {
+            this.skyway.room.replaceStream(ss_with_audio);
+          }
+          else {
+            _dtr("replace stream error.");
+          }
+  
+        })
+        .catch(error => {
+          alert(error);
+          console.log(error);
+          this.skyway.ss = null;
+        });
+      }
+    },
     calc_layout: function () {
       _dtr(`calc_layout:`)
       if (this.layout.using.value == "pinp") {
@@ -454,6 +515,10 @@ var vm = new Vue({
       }
       this.calc_layout();
     },
+    get_streams: function (peerId) {
+      _dtr(`get_streams:${peerId}`)
+      return this.users.filter(user => user.peerId == peerId).map(user => user.stream);
+    },
     remove_stream: function (peerId, stream) {
       _dtr(`remove_stream:${peerId}`)
       _dtr(stream)
@@ -516,11 +581,8 @@ var vm = new Vue({
     step1: function (constraints) {
       _dtr(`step1:`)
       _dtr(constraints)
-      if (vm.skyway.stream) {
-        // vm.users.forEach(user => {
-        //   if (user.stream == vm.skyway.stream) user.stream = null
-        // })
-        vm.skyway.stream.getTracks().forEach(track => track.stop())
+      if (this.skyway.stream) {
+        this.skyway.stream.getTracks().forEach(track => track.stop())
       }
       navigator.mediaDevices.getUserMedia(constraints).then(stream => {
         _dtr(stream)
@@ -754,6 +816,7 @@ var vm = new Vue({
       this.skyway.call.answer(this.skyway.stream, options);
       this.step4(this.skyway.call);
     });
+
   },
   directives: {
     videostream: {
@@ -832,6 +895,7 @@ var vm = new Vue({
       callto: null,
       stats: "",
       login_automatically: false,
+      ss: null, // screen share
     },
     microphone: {
       device: [],
