@@ -70,8 +70,8 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_video" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Video</span>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <button type="button" class="dropdown-item" v-for="mode in video.codec.mode" :class="{active : video.codec.using && mode.value == video.codec.using.value}" @click="select_codec(mode)">{{ mode.label }}</button>
-                <div class="dropdown-divider"></div>
+                <button type="button" class="dropdown-item" v-if="is_offline" v-for="mode in video.codec.mode" :class="{active : video.codec.using && mode.value == video.codec.using.value}" @click="select_codec(mode)">{{ mode.label }}</button>
+                <div class="dropdown-divider"  v-if="is_offline"></div>
                 <button type="button" class="dropdown-item" v-for="mode in video.size.mode" :class="{active : video.size.using && mode.value == video.size.using.value}" @click="select_size(mode)">{{ mode.label }}</button>
                 <div class="dropdown-divider"></div>
                 <button type="button" class="dropdown-item" v-for="mode in video.fps.mode" :class="{active : video.fps.using && mode.value == video.fps.using.value}" @click="select_fps(mode)">{{ mode.label }}</button>

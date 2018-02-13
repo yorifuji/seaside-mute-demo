@@ -17,6 +17,9 @@ var vm = new Vue({
     is_online: function () {
       return this.skyway.call || this.skyway.room;
     },
+    is_offline: function () {
+      return !this.skyway.call && !this.skyway.room;
+    },
     is_p2p: function() {
       return this.skyway.conn_type.using.value == "p2p";
     },
@@ -98,7 +101,6 @@ var vm = new Vue({
       else {
         this.video.codec.using = mode;
       }
-      this.step1(this.retrive_constraints());
     },
     select_size: function (mode) {
       console.log(mode)
@@ -325,8 +327,8 @@ var vm = new Vue({
           this.enumrate_media_devices();
         }
       }).catch(err => {
-        alert(err.name);
         console.error(err);
+        alert(`${err.name}:${err.message}:${err.constraintName}`);
       });
     },
     step3: function (room) {
@@ -361,6 +363,9 @@ var vm = new Vue({
       call.on('stream', stream => {
         console.log(stream);
         this.set_stream(this.skyway.call.remoteId, stream);
+      });
+      call.on('removeStream', stream => {
+        console.log(stream);
       });
       call.on('close', () => {
         this.leave_user(this.skyway.call.remoteId);
@@ -409,7 +414,7 @@ var vm = new Vue({
             }
           }
         })
-        .catch(alert);
+        alert(`${err.name}:${err.message}`);
     }
   },
 
@@ -433,6 +438,10 @@ var vm = new Vue({
     this.skyway.peer.on('error', err => {
       alert(err.message);
       this.skyway.call = null;
+    });
+
+    this.skyway.peer.on('disconnected', id => {
+      alert(id);
     });
 
     this.skyway.peer.on('call', call => {
