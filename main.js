@@ -23,6 +23,15 @@ var vm = new Vue({
     is_p2p: function() {
       return this.skyway.conn_type.using.value == "p2p";
     },
+    is_mesh: function() {
+      return this.skyway.conn_type.using.value == "mesh";
+    },
+    is_sfu: function() {
+      return this.skyway.conn_type.using.value == "sfu";
+    },
+    is_codec_selectable: function () {
+      return this.skyway.conn_type.using.value != "sfu" && (!this.skyway.call && !this.skyway.room);
+    },
   },
   methods: {
     _dbg_trace_users: function () {
