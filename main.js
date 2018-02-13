@@ -327,7 +327,7 @@ var vm = new Vue({
           this.enumrate_media_devices();
         }
       }).catch(err => {
-        console.error(err);
+        console.log(err);
         alert(`${err.name}:${err.message}:${err.constraintName}`);
       });
     },
@@ -414,7 +414,9 @@ var vm = new Vue({
             }
           }
         })
-        alert(`${err.name}:${err.message}`);
+        .catch(err => {
+          alert(`${err.name}:${err.message}`);
+        });
     }
   },
 
