@@ -49,10 +49,8 @@
     <div id="vue-app" class="container">
       <div class="video-container">
         <div class="video-frame" v-for="user in rendererUsers" :user="user" :style="user.style">
-          <video v-source="user.stream" :class="styleCover" :id="user.peerId" :key="user.peerId" @click="click_video(user.peerId)" autoplay playsinline></video>
+          <video v-source="user.stream" :class="styleCover" :id="user.peerId" :key="user.stream.id" @click="click_video(user.peerId)" autoplay playsinline></video>
         </div>
-        <!-- <video v-for="user in users" v-if="user.stream" :id="user.peerId" v-source="user.stream" :style="user.style" @click="click_video(user.peerId)" autoplay playsinline></video> -->
-      	<!-- <video v-for="user in users" v-if="user.stream" :user="user" :id="user.peerId" :srcObj.prop="user.stream" :srcObject.prop="user.stream" :style="user.style" autoplay playsinline></video> -->
       </div>
       <nav class="navbar fixed-bottom navbar-expand-lg navbar-dark bg-dark">
         <!-- <span class="navbar-brand">seaside</span> -->
@@ -62,7 +60,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_mode" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mode</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_mode" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : is_online}">Mode</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_mode">
                 <button type="button" class="dropdown-item" v-for="mode in skyway.conn_type.mode" :class="{active : mode.value == skyway.conn_type.using.value}" @click="select_skyway_conntype(mode)">{{ mode.label }}</button>
               </div>
@@ -70,8 +68,8 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_video" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Video</span>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <button type="button" class="dropdown-item" v-if="is_codec_selectable" v-for="mode in video.codec.mode" :class="{active : video.codec.using && mode.value == video.codec.using.value}" @click="select_codec(mode)">{{ mode.label }}</button>
-                <div class="dropdown-divider"  v-if="is_codec_selectable"></div>
+                <button type="button" class="dropdown-item" v-for="mode in video.codec.mode" :class="{active : video.codec.using && mode.value == video.codec.using.value, disabled: is_sfu}" @click="select_codec(mode)">{{ mode.label }}</button>
+                <div class="dropdown-divider"></div>
                 <button type="button" class="dropdown-item" v-for="mode in video.size.mode" :class="{active : video.size.using && mode.value == video.size.using.value}" @click="select_size(mode)">{{ mode.label }}</button>
                 <div class="dropdown-divider"></div>
                 <button type="button" class="dropdown-item" v-for="mode in video.fps.mode" :class="{active : video.fps.using && mode.value == video.fps.using.value}" @click="select_fps(mode)">{{ mode.label }}</button>
@@ -98,7 +96,7 @@
               </div>
             </li>
             <li class="nav-item dropup">
-              <span class="nav-link dropdown-toggle" id="dropdown_stats" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stats</span>
+              <span class="nav-link dropdown-toggle" id="dropdown_stats" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled: is_mesh || is_sfu}">Stats</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
                 <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_stats()">Output status on console</button>
               </div>

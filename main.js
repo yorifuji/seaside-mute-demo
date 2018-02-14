@@ -473,6 +473,7 @@ var vm = new Vue({
     source: {
       bind(el, binding) {
         el.srcObject = binding.value
+        el.play()
       },
       update(el, binding) {
         if (binding.value !== binding.oldValue) {
@@ -521,7 +522,7 @@ var vm = new Vue({
           { label: "Mesh", value: "mesh" },
           { label: "SFU",  value: "sfu"  },
         ],
-        using: { label: "P2P", value: "p2p" }
+        using: { label: "Mesh", value: "mesh" },
       },
       peer: null,
       call: null,
