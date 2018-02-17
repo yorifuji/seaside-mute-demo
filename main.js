@@ -38,10 +38,11 @@ var vm = new Vue({
       this.users.forEach(user => console.log(user.peerId))
     },
     select_skyway_conntype: function (mode) {
+      _dtr(`select_skyway_conntype:${mode.label}`)
       this.skyway.conn_type.using = mode;
     },
     call: function () {
-
+      _dtr(`call:`)
       // disconnect
       if (this.skyway.call) {
         this.skyway.call.close();
@@ -92,6 +93,7 @@ var vm = new Vue({
       }
     },
     click_video: function (peerId) {
+      _dtr(`click_video:${peerId}`)
       if (this.users.length <= 1) return;
       let users = this.users.filter(user => user.peerId == peerId);
       for (let i = 0; i < this.users.length; i++) {
@@ -103,6 +105,7 @@ var vm = new Vue({
       this.calc_layout();
     },
     select_codec: function (mode) {
+      _dtr(`select_codec:${mode.label}`)
       console.log(mode)
       if (this.video.codec.using == mode) {
         this.video.codec.using = null;
@@ -112,6 +115,7 @@ var vm = new Vue({
       }
     },
     select_size: function (mode) {
+      _dtr(`select_size:${mode.label}`)
       console.log(mode)
       if (this.video.size.using == mode) {
         this.video.size.using = null;
@@ -122,6 +126,7 @@ var vm = new Vue({
       this.step1(this.retrive_constraints());
     },
     select_fps: function (mode) {
+      _dtr(`select_fps:${mode.label}`)
       console.log(mode)
       if (this.video.fps.using == mode) {
         this.video.fps.using = null;
@@ -132,23 +137,27 @@ var vm = new Vue({
       this.step1(this.retrive_constraints());
     },
     select_camera: function (device) {
-      console.log(device)
+      _dtr(`select_camera:${device.label}`)
       this.camera.using = device;
       this.step1(this.retrive_constraints());
     },
     select_mic: function (device) {
+      _dtr(`select_mic:${device.label}`)
       console.log(device);
       this.microphone.using = device;
       this.step1(this.retrive_constraints());
     },
     select_renderer: function (mode) {
+      _dtr(`select_renderer:${mode.label}`)
       this.renderer.using = mode;
     },
     select_layout: function (mode) {
+      _dtr(`select_layout:${mode.label}`)
       this.layout.using = mode;
       this.calc_layout();
     },
     select_stats: function () {
+      _dtr(`select_stats:`)
       if (this.skyway.stats) {
         clearInterval(window.timer_stats);
         this.skyway.stats = null;
@@ -160,6 +169,7 @@ var vm = new Vue({
       }
     },
     calc_layout: function () {
+      _dtr(`calc_layout:`)
       if (this.layout.using.value == "pinp") {
         this.users.forEach((user, index) => {
           if (index == 0) {
@@ -249,12 +259,15 @@ var vm = new Vue({
       }
     },
     create_user: function (peerId) {
+      _dtr(`create_user:${peerId}`)
       return {
         peerId: peerId,
         stream: null,
       }
     },
     set_stream: function (peerId, stream) {
+      _dtr(`set_stream:${peerId}`)
+      _dtr(stream)
       if (this.users.filter(user => user.peerId == peerId).length == 0) {
         let user = this.create_user(peerId);
         user.stream = stream;
@@ -268,24 +281,30 @@ var vm = new Vue({
       this.calc_layout();
     },
     remove_stream: function (peerId, stream) {
+      _dtr(`remove_stream:${peerId}`)
+      _dtr(stream)
       this.users.forEach(user => {
         if (user.peerId == peerId && user.stream == stream) user.stream = null;
       });
       this.calc_layout();
     },
     join_user: function (peerId) {
+      _dtr(`join_user:${peerId}`)
       this.users.unshift(this.create_user(peerId));
       this.calc_layout();
     },
     leave_user: function (peerId) {
+      _dtr(`leave_user:${peerId}`)
       this.users = this.users.filter(user => user.peerId != peerId);
       this.calc_layout();
     },
     leave_others: function () {
+      _dtr(`leave_others:`)
       this.users = this.users.filter(user => user.peerId == this.skyway.peer.id);
       this.calc_layout();
     },
     retrive_constraints: function () {
+      _dtr(`retrive_constraints:`)
       if (!this.video.size.using && !this.video.size.using) {
         return {
           video: true,
@@ -320,9 +339,10 @@ var vm = new Vue({
       };
     },
     step1: function (constraints) {
-      console.log(constraints)
+      _dtr(`step1:`)
+      _dtr(constraints)
       navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-        console.log(stream);
+        _dtr(stream)
         this.skyway.stream = stream;
         this.set_stream(this.skyway.peer.id, stream);
 
@@ -336,51 +356,63 @@ var vm = new Vue({
           this.enumrate_media_devices();
         }
       }).catch(err => {
-        console.log(err);
+        _dtr(err)
         alert(`${err.name}:${err.message}:${err.constraintName}`);
       });
     },
     step3: function (room) {
+      _dtr(`step3:`)
+      _dtr(room)
       // Wait for stream on the call, then set peer video display
       room.on('stream', stream => {
-        console.log(stream);
+        _dtr("room.on('stream'")
+        _dtr(stream)
         this.set_stream(stream.peerId, stream);
       });
 
       room.on('removeStream', stream => {
-        console.log(stream);
+        _dtr("room.on('removeStream'")
+        _dtr(stream)
         this.remove_stream(stream.peerId, stream);
       });
 
       room.on('peerJoin', peerId => {
-        console.log(peerId);
+        _dtr("room.on('peerJoin'")
+        _dtr(peerId)
         this.join_user(peerId);
       })
 
       room.on('peerLeave', peerId => {
-        console.log(peerId);
+        _dtr("room.on('peerLeave'")
+        _dtr(peerId)
         this.leave_user(peerId);
       });
 
       room.on('close', () => {
+        _dtr("room.on('close'")
         this.leave_others();
         this.skyway.room = null;
       });
     },
     step4: function (call) {
+      _dtr(`step4:${call}`)
       // Wait for stream on the call, then set peer video display
       call.on('stream', stream => {
-        console.log(stream);
+        _dtr("call.on('stream'")
+        _dtr(stream)
         this.set_stream(this.skyway.call.remoteId, stream);
       });
       call.on('removeStream', stream => {
-        console.log(stream);
+        _dtr("call.on('removeStream'")
+        _dtr(stream)
       });
       call.on('close', () => {
+        _dtr("call.on('close'")
         this.leave_user(this.skyway.call.remoteId);
       });
     },
     enumrate_media_devices: function () {
+      _dtr(`enumrate_media_devices:`)
       let mic_old = this.microphone.using;
       let cam_old = this.camera.using;
       this.microphone.device = []
@@ -424,6 +456,7 @@ var vm = new Vue({
           }
         })
         .catch(err => {
+          _dtr(err)
           alert(`${err.name}:${err.message}`);
         });
     }
@@ -443,19 +476,26 @@ var vm = new Vue({
     });
 
     this.skyway.peer.on('open', id => {
+      _dtr("peer.on('open'")
       this.step1({ video: true, audio: true });
     });
 
     this.skyway.peer.on('error', err => {
+      _dtr("peer.on('error'")
+      _dtr(err);
       alert(err.message);
       this.skyway.call = null;
     });
 
     this.skyway.peer.on('disconnected', id => {
-      alert(id);
+      _dtr("peer.on('disconnected'")
+      _dtr(id);
+      this.skyway.call = null;
     });
 
     this.skyway.peer.on('call', call => {
+      _dtr("peer.on('call'")
+      _dtr(call);
 
       this.skyway.call = call;
 
