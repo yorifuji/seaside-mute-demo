@@ -92,12 +92,13 @@ var vm = new Vue({
         this.step3(this.skyway.room);
       }
     },
-    click_video: function (peerId) {
-      _dtr(`click_video:${peerId}`)
+    click_video: function (stream) {
+      _dtr(`click_video:`)
+      _dtr(stream)
       if (this.users.length <= 1) return;
-      let users = this.users.filter(user => user.peerId == peerId);
+      let users = this.users.filter(user => user.stream.id == stream.id);
       for (let i = 0; i < this.users.length; i++) {
-        if (this.users[i].peerId != peerId) {
+        if (this.users[i].stream.id != stream.id) {
           users.push(this.users[i]);
         }
       }

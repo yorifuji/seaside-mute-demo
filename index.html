@@ -49,7 +49,7 @@
     <div id="vue-app" class="container">
       <div class="video-container">
         <div class="video-frame" v-for="user in rendererUsers" :user="user" :style="user.style">
-          <video v-source="user.stream" :class="styleCover" :id="user.peerId" :key="user.stream.id" @click="click_video(user.peerId)" autoplay playsinline></video>
+          <video v-source="user.stream" :class="styleCover" @click="click_video(user.stream)" autoplay playsinline></video>
         </div>
       </div>
       <nav class="navbar fixed-bottom navbar-expand-lg navbar-dark bg-dark">
