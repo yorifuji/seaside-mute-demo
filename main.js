@@ -124,7 +124,7 @@ var vm = new Vue({
       else {
         this.video.size.using = mode;
       }
-      this.step1(this.retrive_constraints());
+      this.step1(this.get_constraints());
     },
     select_fps: function (mode) {
       _dtr(`select_fps:${mode.label}`)
@@ -135,18 +135,18 @@ var vm = new Vue({
       else {
         this.video.fps.using = mode;
       }
-      this.step1(this.retrive_constraints());
+      this.step1(this.get_constraints());
     },
     select_camera: function (device) {
       _dtr(`select_camera:${device.label}`)
       this.camera.using = device;
-      this.step1(this.retrive_constraints());
+      this.step1(this.get_constraints());
     },
     select_mic: function (device) {
       _dtr(`select_mic:${device.label}`)
       console.log(device);
       this.microphone.using = device;
-      this.step1(this.retrive_constraints());
+      this.step1(this.get_constraints());
     },
     select_renderer: function (mode) {
       _dtr(`select_renderer:${mode.label}`)
@@ -304,40 +304,41 @@ var vm = new Vue({
       this.users = this.users.filter(user => user.peerId == this.skyway.peer.id);
       this.calc_layout();
     },
-    retrive_constraints: function () {
-      _dtr(`retrive_constraints:`)
-      if (!this.video.size.using && !this.video.size.using) {
-        return {
-          video: true,
-          audio: true
+    get_constraints: function () {
+      _dtr(`get_constraints:`)
+      const ct = { video: false, audio: false };
+      if (this.camera.device) {
+        const fmt = {};
+        if (this.camera.using) {
+          fmt.deviceId = this.camera.using.deviceId;
+        }
+        if (this.video.size.using) {
+          fmt.width  = this.video.size.using.value.width;
+          fmt.height = this.video.size.using.value.height;
+        }
+        if (this.video.fps.using) {
+          fmt.frameRate = this.video.fps.using.value;
+        }
+        if (Object.keys(fmt).length) {
+          ct.video = fmt;
+        }
+        else {
+          ct.video = true;
         }
       }
-      let fmt = {
-        video: { deviceId: this.camera.using ? this.camera.using.deviceId : true },
-        audio: { deviceId: this.microphone.using ? this.microphone.using.deviceId : true },
-      }
-      if (this.video.size.using) {
-        // fmt.width = {
-        //   min: this.video.size.using.value.width,
-        //   max: this.video.size.using.value.width,
-        // }
-        // fmt.height = {
-        //   min: this.video.size.using.value.height,
-        //   max: this.video.size.using.value.height,
-        // }
-        fmt.width  = this.video.size.using.value.width;
-        fmt.height = this.video.size.using.value.height;
-      }
-      if (this.video.fps.using) {
-        fmt.frameRate = {
-          min: this.video.fps.using.value,
-          max: this.video.fps.using.value,
+      if (this.microphone.device) {
+        const fmt = {};
+        if (this.microphone.using) {
+          fmt.deviceId = this.microphone.using.deviceId;
+        }
+        if (Object.keys(fmt).length) {
+          ct.audio = fmt;
+        }
+        else {
+          ct.audio = true;
         }
       }
-      return {
-        video: fmt,
-        audio: true
-      };
+      return ct;
     },
     step1: function (constraints) {
       _dtr(`step1:`)
@@ -438,11 +439,11 @@ var vm = new Vue({
               }
             }
           }
-          else {
-            if (this.microphone.device.length) {
-              this.microphone.using = this.microphone.device[0];
-            }
-          }
+          // else {
+          //   if (this.microphone.device.length) {
+          //     this.microphone.using = this.microphone.device[0];
+          //   }
+          // }
           if (cam_old) {
             for (let i = 0; i < this.camera.device.length; i++) {
               if (cam_old.deviceId == this.camera.device[i].deviceId) {
@@ -450,11 +451,11 @@ var vm = new Vue({
               }
             }
           }
-          else {
-            if (this.camera.device.length) {
-              this.camera.using = this.camera.device[0];
-            }
-          }
+          // else {
+          //   if (this.camera.device.length) {
+          //     this.camera.using = this.camera.device[0];
+          //   }
+          // }
         })
         .catch(err => {
           _dtr(err)
