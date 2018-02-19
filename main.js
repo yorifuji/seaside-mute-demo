@@ -139,13 +139,23 @@ var vm = new Vue({
     },
     select_camera: function (device) {
       _dtr(`select_camera:${device.label}`)
-      this.camera.using = device;
+      if (this.camera.using == device) {
+        this.camera.using = null;
+      }
+      else {
+        this.camera.using = device;
+      }
       this.step1(this.get_constraints());
     },
     select_mic: function (device) {
       _dtr(`select_mic:${device.label}`)
       console.log(device);
-      this.microphone.using = device;
+      if (this.microphone.using == device) {
+        this.microphone.using = null;
+      }
+      else {
+        this.microphone.using = device;
+      }
       this.step1(this.get_constraints());
     },
     select_renderer: function (mode) {
