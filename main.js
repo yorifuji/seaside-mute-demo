@@ -12,10 +12,10 @@ var vm = new Vue({
       return { "video cover": this.renderer.using.value == "cover" }
     },
     disabled_item: function () {
-      return this.skyway.call || this.skyway.room ? { disabled: false } : { disabled: true };
+      return (this.skyway.call || this.skyway.room) ? { disabled: false } : { disabled: true };
     },
     is_online: function () {
-      return this.skyway.call || this.skyway.room;
+      return (this.skyway.call || this.skyway.room) ? true : false;
     },
     is_offline: function () {
       return !this.skyway.call && !this.skyway.room;
