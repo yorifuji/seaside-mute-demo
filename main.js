@@ -481,11 +481,33 @@ var vm = new Vue({
       return;
     }
 
+    const hash = location.hash.match(/^#(p2p|mesh|sfu)-([\w-]+)$/)
+    if (hash) {
+      for (let mode of this.skyway.conn_type.mode) {
+        if (mode.value == hash[1]) {
+          this.skyway.conn_type.using = mode
+          if (this.is_p2p) {
+            this.skyway.peerId = hash[2];
+          }
+          else if (this.is_mesh || this.is_sfu) {
+            this.skyway.callto = hash[2];
+          }
+          break;
+        }
+      }
+    }
+
     // Peer object
-    this.skyway.peer = new Peer({
+    const params = {
       key: window.__SKYWAY_KEY__,
       debug: 3,
-    });
+    }
+    if (this.is_p2p && this.skyway.peerId) {
+      this.skyway.peer = new Peer(this.skyway.peerId, params)
+    }
+    else {
+      this.skyway.peer = new Peer(params)
+    }
 
     this.skyway.peer.on('open', id => {
       _dtr("peer.on('open'")
@@ -580,6 +602,7 @@ var vm = new Vue({
       call: null,
       room: null,
       stream: null,
+      peerId: null,
       callto: null,
       stats: "",
     },
