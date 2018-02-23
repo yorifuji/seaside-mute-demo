@@ -353,6 +353,12 @@ var vm = new Vue({
     step1: function (constraints) {
       _dtr(`step1:`)
       _dtr(constraints)
+      if (vm.skyway.stream) {
+        // vm.users.forEach(user => {
+        //   if (user.stream == vm.skyway.stream) user.stream = null
+        // })
+        vm.skyway.stream.getTracks().forEach(track => track.stop())
+      }
       navigator.mediaDevices.getUserMedia(constraints).then(stream => {
         _dtr(stream)
         this.skyway.stream = stream;
