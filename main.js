@@ -472,8 +472,8 @@ var vm = new Vue({
           //     this.camera.using = this.camera.device[0];
           //   }
           // }
-          if (this.skyway.login_automaticall) {
-            this.skyway.login_automaticall = false
+          if (this.skyway.login_automatically) {
+            this.skyway.login_automatically = false
             this.call()
           }
         })
@@ -501,7 +501,7 @@ var vm = new Vue({
           }
           else if (this.is_mesh || this.is_sfu) {
             this.skyway.callto = hash[2];
-            this.skyway.login_automaticall = true
+            this.skyway.login_automatically = true
           }
           break;
         }
@@ -616,7 +616,7 @@ var vm = new Vue({
       peerId: null,
       callto: null,
       stats: "",
-      login_automaticall: false,
+      login_automatically: false,
     },
     microphone: {
       device: [],
