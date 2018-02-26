@@ -522,7 +522,22 @@ var vm = new Vue({
 
     this.skyway.peer.on('open', id => {
       _dtr("peer.on('open'")
-      this.step1({ video: true, audio: true });
+
+      navigator.mediaDevices.enumerateDevices()
+        .then(deviceInfos => {
+          let has_camera = false;
+          let has_audio = false;
+          deviceInfos.forEach(device => {
+            if (device.kind === 'audioinput') has_audio = true
+            else if (device.kind === 'videoinput') has_camera = true
+          })
+          if (!has_audio && !has_camera) {
+            alert("No audio and camera.")
+          }
+          else {
+            this.step1({ video: has_camera, audio : has_audio})
+          }
+        });
     });
 
     this.skyway.peer.on('error', err => {
