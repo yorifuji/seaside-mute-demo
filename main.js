@@ -34,6 +34,7 @@ var vm = new Vue({
     select_skyway_conntype: function (mode) {
       _dtr(`select_skyway_conntype:${mode.label}`)
       this.skyway.conn_type.using = mode;
+      this.update_hash()
     },
     call: function () {
       _dtr(`call:`)
@@ -85,6 +86,20 @@ var vm = new Vue({
 
         this.step3(this.skyway.room);
       }
+
+    },
+    update_hash: function() {
+      let hash = "";
+      if (this.is_p2p) {
+        hash = `#p2p-${this.skyway.peer.id}`
+      }
+      else if (this.is_mesh && this.skyway.room) {
+        hash = `#mesh-${this.skyway.callto}`
+      }
+      else if (this.is_sfu && this.skyway.room) {
+        hash = `#sfu-${this.skyway.callto}`
+      }
+      location.hash = hash
     },
     click_video: function (stream) {
       _dtr(`click_video:`)
@@ -370,6 +385,9 @@ var vm = new Vue({
     step3: function (room) {
       _dtr(`step3:`)
       _dtr(room)
+
+      this.update_hash()
+
       // Wait for stream on the call, then set peer video display
       room.on('stream', stream => {
         _dtr("room.on('stream'")
@@ -399,10 +417,14 @@ var vm = new Vue({
         _dtr("room.on('close'")
         this.leave_others();
         this.skyway.room = null;
+        this.update_hash()
       });
     },
     step4: function (call) {
       _dtr(`step4:${call}`)
+
+      this.update_hash()
+
       // Wait for stream on the call, then set peer video display
       call.on('stream', stream => {
         _dtr("call.on('stream'")
@@ -511,7 +533,7 @@ var vm = new Vue({
 
     this.skyway.peer.on('open', id => {
       _dtr("peer.on('open'")
-
+      this.update_hash()
       navigator.mediaDevices.enumerateDevices()
         .then(deviceInfos => {
           let has_camera = false;
