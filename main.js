@@ -11,9 +11,6 @@ var vm = new Vue({
     styleCover: function () {
       return { "video cover": this.renderer.using.value == "cover" }
     },
-    disabled_item: function () {
-      return (this.skyway.call || this.skyway.room) ? { disabled: false } : { disabled: true };
-    },
     is_online: function () {
       return (this.skyway.call || this.skyway.room) ? true : false;
     },
@@ -34,9 +31,6 @@ var vm = new Vue({
     },
   },
   methods: {
-    _dbg_trace_users: function () {
-      this.users.forEach(user => console.log(user.peerId))
-    },
     select_skyway_conntype: function (mode) {
       _dtr(`select_skyway_conntype:${mode.label}`)
       this.skyway.conn_type.using = mode;
@@ -97,12 +91,7 @@ var vm = new Vue({
       _dtr(stream)
       if (this.users.length <= 1) return;
       let users = this.users.filter(user => user.stream.id == stream.id);
-      for (let i = 0; i < this.users.length; i++) {
-        if (this.users[i].stream.id != stream.id) {
-          users.push(this.users[i]);
-        }
-      }
-      this.users = users;
+      this.users = users.concat(this.users.filter(user => user.stream.id != stream.id))
       this.calc_layout();
     },
     select_codec: function (mode) {
@@ -653,6 +642,7 @@ var vm = new Vue({
       size: {
         mode: [
           { label: "4096 x 2160", value: { width: 4096, height: 2160 } },
+          { label: "3840 x 2160", value: { width: 3840, height: 2160 } },
           { label: "1920 x 1080", value: { width: 1920, height: 1080 } },
           // { label: "1280 x 960",  value: { width: 1280, height:  960 } },
           { label: "1280 x 720",  value: { width: 1280, height:  720 } },
