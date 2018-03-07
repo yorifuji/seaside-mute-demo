@@ -29,6 +29,12 @@ var vm = new Vue({
     is_codec_selectable: function () {
       return this.skyway.conn_type.using.value != "sfu" && (!this.skyway.call && !this.skyway.room);
     },
+    has_camera: function () {
+      return this.camera.device && this.camera.device.length
+    },
+    has_microphone: function () {
+      return this.microphone.device && this.microphone.device.length
+    }
   },
   methods: {
     select_skyway_conntype: function (mode) {
@@ -321,7 +327,7 @@ var vm = new Vue({
     get_constraints: function () {
       _dtr(`get_constraints:`)
       const ct = { video: false, audio: false };
-      if (this.camera.device) {
+      if (this.camera.device && this.camera.device.length) {
         const fmt = {};
         if (this.camera.using) {
           fmt.deviceId = this.camera.using.deviceId;
@@ -340,7 +346,7 @@ var vm = new Vue({
           ct.video = true;
         }
       }
-      if (this.microphone.device) {
+      if (this.microphone.device && this.microphone.device.length) {
         const fmt = {};
         if (this.microphone.using) {
           fmt.deviceId = this.microphone.using.deviceId;
