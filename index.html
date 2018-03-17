@@ -60,7 +60,7 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_mode" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : is_online}">Mode</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_mode">
-                <button type="button" class="dropdown-item" v-for="mode in skyway.conn_type.mode" :class="{active : mode.value == skyway.conn_type.using.value}" @click="select_skyway_conntype(mode)">{{ mode.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in skyway.mode.item" :class="{active : item.value == skyway.mode.using.value}" @click="select_skyway_mode(item)">{{ item.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
@@ -72,11 +72,11 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_video" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Video</span>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <button type="button" class="dropdown-item" v-for="mode in video.codec.mode" :class="{active : video.codec.using && mode.value == video.codec.using.value, disabled: is_sfu}" @click="select_codec(mode)">{{ mode.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in video.codec.item" :class="{active : video.codec.using && item.value == video.codec.using.value, disabled: is_sfu}" @click="select_codec(item)">{{ item.label }}</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="mode in video.size.mode" :class="{active : video.size.using && mode.value == video.size.using.value}" @click="select_size(mode)">{{ mode.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in video.size.item" :class="{active : video.size.using && item.value == video.size.using.value}" @click="select_size(item)">{{ item.label }}</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="mode in video.fps.mode" :class="{active : video.fps.using && mode.value == video.fps.using.value}" @click="select_fps(mode)">{{ mode.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in video.fps.item" :class="{active : video.fps.using && item.value == video.fps.using.value}" @click="select_fps(item)">{{ item.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
@@ -94,9 +94,9 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_layout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layout</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
-                <button type="button" class="dropdown-item" v-for="mode in layout.mode" :class="{active : mode.value == layout.using.value}" @click="select_layout(mode)">{{ mode.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in layout.item" :class="{active : item.value == layout.using.value}" @click="select_layout(item)">{{ item.label }}</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="mode in renderer.mode" :class="{active : mode.value == renderer.using.value}" @click="select_renderer(mode)">{{ mode.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in renderer.item" :class="{active : item.value == renderer.using.value}" @click="select_renderer(item)">{{ item.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
