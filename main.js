@@ -17,13 +17,13 @@ var vm = new Vue({
     is_offline: function () {
       return !this.skyway.call && !this.skyway.room;
     },
-    is_p2p: function() {
+    is_p2p: function () {
       return this.skyway.mode.using.value == "p2p";
     },
-    is_mesh: function() {
+    is_mesh: function () {
       return this.skyway.mode.using.value == "mesh";
     },
-    is_sfu: function() {
+    is_sfu: function () {
       return this.skyway.mode.using.value == "sfu";
     },
     is_codec_selectable: function () {
@@ -55,7 +55,7 @@ var vm = new Vue({
         this.skyway.room = null;
         return;
       }
-    
+
       if (this.skyway.mode.using.value == "p2p") {
 
         // setup options
@@ -100,7 +100,7 @@ var vm = new Vue({
       }
 
     },
-    update_hash: function() {
+    update_hash: function () {
       let hash = "";
       if (this.is_p2p) {
         hash = `#p2p-${this.skyway.peer.id}`
@@ -153,7 +153,7 @@ var vm = new Vue({
       }
       this.step1(this.get_constraints());
     },
-    select_bandwidth: function(item) {
+    select_bandwidth: function (item) {
       _dtr(`select_bandwidth:${item.label}`)
       if (this.bandwidth.using == item) {
         this.bandwidth.using = null;
@@ -348,7 +348,7 @@ var vm = new Vue({
           fmt.deviceId = this.camera.using.deviceId;
         }
         if (this.video.size.using) {
-          fmt.width  = this.video.size.using.value.width;
+          fmt.width = this.video.size.using.value.width;
           fmt.height = this.video.size.using.value.height;
         }
         if (this.video.fps.using) {
@@ -567,7 +567,7 @@ var vm = new Vue({
             alert("No audio and camera.")
           }
           else {
-            this.step1({ video: has_camera, audio : has_audio})
+            this.step1({ video: has_camera, audio: has_audio })
           }
         });
     });
@@ -653,9 +653,9 @@ var vm = new Vue({
     skyway: {
       mode: {
         item: [
-          { label: "P2P",  value: "p2p"  },
+          { label: "P2P", value: "p2p" },
           { label: "Mesh", value: "mesh" },
-          { label: "SFU",  value: "sfu"  },
+          { label: "SFU", value: "sfu" },
         ],
         using: { label: "Mesh", value: "mesh" },
       },
@@ -678,18 +678,18 @@ var vm = new Vue({
     },
     bandwidth: {
       item: [
-        { label: "5Mbps",   value: 5000 },
-        { label: "3Mbps",   value: 3000 },
-        { label: "1Mbps",   value: 1000 },
-        { label: "500kbps", value: 500  },
+        { label: "5Mbps", value: 5000 },
+        { label: "3Mbps", value: 3000 },
+        { label: "1Mbps", value: 1000 },
+        { label: "500kbps", value: 500 },
       ],
       using: null,
     },
     video: {
       codec: {
         item: [
-          { label: "VP8",  value: "VP8"  },
-          { label: "VP9",  value: "VP9"  },
+          { label: "VP8", value: "VP8" },
+          { label: "VP9", value: "VP9" },
           { label: "H264", value: "H264" },
         ],
         using: null,
@@ -700,10 +700,10 @@ var vm = new Vue({
           { label: "3840 x 2160", value: { width: 3840, height: 2160 } },
           { label: "1920 x 1080", value: { width: 1920, height: 1080 } },
           // { label: "1280 x 960",  value: { width: 1280, height:  960 } },
-          { label: "1280 x 720",  value: { width: 1280, height:  720 } },
+          { label: "1280 x 720", value: { width: 1280, height: 720 } },
           // { label: " 960 x 720",  value: { width:  960, height:  720 } },
           // { label: " 800 x 600",  value: { width:  800, height:  600 } },
-          { label: " 640 x 480",  value: { width:  640, height:  480 } },
+          { label: " 640 x 480", value: { width: 640, height: 480 } },
           // { label: " 320 x 240",  value: { width:  320, height:  240 } },
         ],
         using: null,
@@ -714,15 +714,15 @@ var vm = new Vue({
           { label: "30 fps", value: 30 },
           { label: "24 fps", value: 24 },
           { label: "10 fps", value: 10 },
-          { label: " 5 fps", value:  5 },
-          { label: " 1 fps", value:  1 },
+          { label: " 5 fps", value: 5 },
+          { label: " 1 fps", value: 1 },
         ],
         using: null,
       },
     },
     renderer: {
       item: [
-        { label: "Cover",  value: "cover"  },
+        { label: "Cover", value: "cover" },
         { label: "Normal", value: "normal" },
       ],
       using: { label: "Cover", value: "cover" }
@@ -737,7 +737,7 @@ var vm = new Vue({
   },
 });
 
-async function getRTCStats(statsObject){
+async function getRTCStats(statsObject) {
 
   let trasportArray = [];
   let candidateArray = [];
@@ -763,99 +763,99 @@ async function getRTCStats(statsObject){
 
   let stats = await statsObject;
   stats.forEach(stat => {
-      if(stat.id.indexOf('RTCTransport') !== -1){
-          trasportArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCIceCandidatePair') !== -1){
-          candidatePairArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCIceCandidate_') !== -1){
-          candidateArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCInboundRTPAudioStream') !== -1){
-          inboundRTPAudioStreamArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCInboundRTPVideoStream') !== -1){
-          inboundRTPVideoStreamArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCOutboundRTPAudioStream') !== -1){
-          outboundRTPAudioStreamArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCOutboundRTPVideoStream') !== -1){
-          outboundRTPVideoStreamArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCMediaStreamTrack_local_audio') !== -1){
-          mediaStreamTrack_local_audioArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCMediaStreamTrack_local_video') !== -1){
-          mediaStreamTrack_local_videoArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCMediaStreamTrack_remote_audio') !== -1){
-          mediaStreamTrack_remote_audioArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCMediaStreamTrack_remote_video') !== -1){
-          mediaStreamTrack_remote_videoArray.push(stat);
-      }
-      if(stat.id.indexOf('RTCCodec') !== -1){
-          codecArray.push(stat);
-      }
+    if (stat.id.indexOf('RTCTransport') !== -1) {
+      trasportArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCIceCandidatePair') !== -1) {
+      candidatePairArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCIceCandidate_') !== -1) {
+      candidateArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCInboundRTPAudioStream') !== -1) {
+      inboundRTPAudioStreamArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCInboundRTPVideoStream') !== -1) {
+      inboundRTPVideoStreamArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCOutboundRTPAudioStream') !== -1) {
+      outboundRTPAudioStreamArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCOutboundRTPVideoStream') !== -1) {
+      outboundRTPVideoStreamArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCMediaStreamTrack_local_audio') !== -1) {
+      mediaStreamTrack_local_audioArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCMediaStreamTrack_local_video') !== -1) {
+      mediaStreamTrack_local_videoArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCMediaStreamTrack_remote_audio') !== -1) {
+      mediaStreamTrack_remote_audioArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCMediaStreamTrack_remote_video') !== -1) {
+      mediaStreamTrack_remote_videoArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCCodec') !== -1) {
+      codecArray.push(stat);
+    }
   });
 
   trasportArray.forEach(transport => {
-      if(transport.dtlsState === 'connected'){
-          candidatePairId = transport.selectedCandidatePairId;
-      }
+    if (transport.dtlsState === 'connected') {
+      candidatePairId = transport.selectedCandidatePairId;
+    }
   });
   candidatePairArray.forEach(candidatePair => {
-      if(candidatePair.state === 'succeeded' && candidatePair.id === candidatePairId){
-          localCandidateId = candidatePair.localCandidateId;
-          remoteCandidateId = candidatePair.remoteCandidateId;
-      }
+    if (candidatePair.state === 'succeeded' && candidatePair.id === candidatePairId) {
+      localCandidateId = candidatePair.localCandidateId;
+      remoteCandidateId = candidatePair.remoteCandidateId;
+    }
   });
   candidateArray.forEach(candidate => {
-      if(candidate.id === localCandidateId){
-          localCandidate = candidate;
-      }
-      if(candidate.id === remoteCandidateId){
-          remoteCandidate = candidate;
-      }
+    if (candidate.id === localCandidateId) {
+      localCandidate = candidate;
+    }
+    if (candidate.id === remoteCandidateId) {
+      remoteCandidate = candidate;
+    }
   });
 
   inboundRTPAudioStreamArray.forEach(inboundRTPAudioStream => {
-      codecArray.forEach(codec => {
-          if(inboundRTPAudioStream.codecId === codec.id){
-              inboundAudioCodec = codec;
-          }
-      });
+    codecArray.forEach(codec => {
+      if (inboundRTPAudioStream.codecId === codec.id) {
+        inboundAudioCodec = codec;
+      }
+    });
   });
   inboundRTPVideoStreamArray.forEach(inboundRTPVideoStream => {
-      codecArray.forEach(codec => {
-          if(inboundRTPVideoStream.codecId === codec.id){
-              inboundVideoCodec = codec;
-          }
-      });
+    codecArray.forEach(codec => {
+      if (inboundRTPVideoStream.codecId === codec.id) {
+        inboundVideoCodec = codec;
+      }
+    });
   });
   outboundRTPAudioStreamArray.forEach(outboundRTPAudioStream => {
-      codecArray.forEach(codec => {
-          if(outboundRTPAudioStream.codecId === codec.id){
-              outboundAudioCodec = codec;
-          }
-      });
+    codecArray.forEach(codec => {
+      if (outboundRTPAudioStream.codecId === codec.id) {
+        outboundAudioCodec = codec;
+      }
+    });
   });
   outboundRTPVideoStreamArray.forEach(outboundRTPVideo => {
-      codecArray.forEach(codec => {
-          if(outboundRTPVideo.codecId === codec.id){
-              outboundVideoCodec = codec;
-          }
-      });
+    codecArray.forEach(codec => {
+      if (outboundRTPVideo.codecId === codec.id) {
+        outboundVideoCodec = codec;
+      }
+    });
   });
 
   let text = "";
   text += "Local Candidate\n";
-  text += localCandidate.ip + ':' + localCandidate.port + '(' +localCandidate.protocol + ')' + '\ntype:' + localCandidate.candidateType;
+  text += localCandidate.ip + ':' + localCandidate.port + '(' + localCandidate.protocol + ')' + '\ntype:' + localCandidate.candidateType;
   text += '\n'
   text += "Remote Candidate\n";
-  text += remoteCandidate.ip + ':' + remoteCandidate.port + '(' +remoteCandidate.protocol + ')' + '\ntype:' + remoteCandidate.candidateType;
+  text += remoteCandidate.ip + ':' + remoteCandidate.port + '(' + remoteCandidate.protocol + ')' + '\ntype:' + remoteCandidate.candidateType;
   text += '\n'
   text += "Inbound Codec\n";
   text += inboundVideoCodec.mimeType + '\n' + inboundAudioCodec.mimeType;
