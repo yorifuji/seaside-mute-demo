@@ -58,15 +58,18 @@ var vm = new Vue({
     
       if (this.skyway.conn_type.using.value == "p2p") {
 
-        // setup params
-        let params = {};
+        // setup options
+        let options = {};
         if (this.video.codec.using) {
-          params.videoCodec = this.video.codec.using.value;
+          options.videoCodec = this.video.codec.using.value;
         }
-        _dtr(params);
+        if (this.bandwidth.using) {
+          options.videoBandwidth = this.bandwidth.using.value
+        }
+        _dtr(options);
 
         // call
-        this.skyway.call = this.skyway.peer.call(this.skyway.callto, this.skyway.stream, params);
+        this.skyway.call = this.skyway.peer.call(this.skyway.callto, this.skyway.stream, options);
         _dtr(this.skyway.call);
 
         this.step4(this.skyway.call);
@@ -75,6 +78,9 @@ var vm = new Vue({
         let options = { mode: 'mesh', stream: this.skyway.stream };
         if (this.video.codec.using) {
           options.videoCodec = this.video.codec.using.value;
+        }
+        if (this.bandwidth.using) {
+          options.videoBandwidth = this.bandwidth.using.value
         }
         _dtr(options);
 
@@ -146,6 +152,15 @@ var vm = new Vue({
         this.video.fps.using = mode;
       }
       this.step1(this.get_constraints());
+    },
+    select_bandwidth: function(item) {
+      _dtr(`select_bandwidth:${item.label}`)
+      if (this.bandwidth.using == item) {
+        this.bandwidth.using = null;
+      }
+      else {
+        this.bandwidth.using = item;
+      }
     },
     select_camera: function (device) {
       _dtr(`select_camera:${device.label}`)
@@ -526,15 +541,15 @@ var vm = new Vue({
     }
 
     // Peer object
-    const params = {
+    const options = {
       key: window.__SKYWAY_KEY__,
       debug: 3,
     }
     if (this.is_p2p && this.skyway.peerId) {
-      this.skyway.peer = new Peer(this.skyway.peerId, params)
+      this.skyway.peer = new Peer(this.skyway.peerId, options)
     }
     else {
-      this.skyway.peer = new Peer(params)
+      this.skyway.peer = new Peer(options)
     }
 
     this.skyway.peer.on('open', id => {
@@ -576,13 +591,16 @@ var vm = new Vue({
 
       this.skyway.call = call;
 
-      let params = {};
+      let options = {};
       if (this.video.codec.using) {
-        params.videoCodec = this.video.codec.using.value;
+        options.videoCodec = this.video.codec.using.value;
       }
-      _dtr(params);
+      if (this.bandwidth.using) {
+        options.videoBandwidth = this.bandwidth.using.value
+      }
+      _dtr(options);
 
-      this.skyway.call.answer(this.skyway.stream, params);
+      this.skyway.call.answer(this.skyway.stream, options);
       this.step4(this.skyway.call);
     });
   },
@@ -656,6 +674,15 @@ var vm = new Vue({
     },
     camera: {
       device: [],
+      using: null,
+    },
+    bandwidth: {
+      item: [
+        { label: "5Mbps",   value: 5000 },
+        { label: "3Mbps",   value: 3000 },
+        { label: "1Mbps",   value: 1000 },
+        { label: "500kbps", value: 500  },
+      ],
       using: null,
     },
     video: {

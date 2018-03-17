@@ -64,6 +64,12 @@
               </div>
             </li>
             <li class="nav-item dropup">
+              <span class="nav-link dropdown-toggle" id="dropdown_bandwidth" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : is_online || is_sfu}">Bandwidth</span>
+              <div class="dropdown-menu" aria-labelledby="dropdown_bandwidth">
+                <button type="button" class="dropdown-item" v-for="item in bandwidth.item" :class="{active : bandwidth.using && bandwidth.using.value == item.value}" @click="select_bandwidth(item)">{{ item.label }}</button>
+              </div>
+            </li>
+            <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_video" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Video</span>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
                 <button type="button" class="dropdown-item" v-for="mode in video.codec.mode" :class="{active : video.codec.using && mode.value == video.codec.using.value, disabled: is_sfu}" @click="select_codec(mode)">{{ mode.label }}</button>
