@@ -207,6 +207,10 @@ var vm = new Vue({
     calc_layout: function () {
       _dtr(`calc_layout:`)
       if (this.layout.using.value == "pinp") {
+        const w = window.innerWidth
+        const h = window.innerHeight - $(".navbar").outerHeight()
+        const thumbnail_h = h * 0.3;
+        const thumbnail_w = thumbnail_h * 4 / 3;
         this.users.forEach((user, index) => {
           if (index == 0) {
             user.style = {
@@ -221,9 +225,9 @@ var vm = new Vue({
           else {
             user.style = {
               bottom: "10px",
-              right: 10 * index + 200 * (index - 1) + "px",
-              width: "200px",
-              height: "150px",
+              right: 10 * index + thumbnail_w * (index - 1) + "px",
+              width: `${thumbnail_w}px`,
+              height: `${thumbnail_h}px`,
               position: "absolute",
               zIndex: 2,
             }
@@ -231,7 +235,7 @@ var vm = new Vue({
           Vue.set(this.users, index, user);
         });
       }
-      else {
+      else if (this.layout.using.value == "grid") {
         if (this.users.length == 1) {
           let user = this.users[0];
           user.style = {
@@ -244,7 +248,7 @@ var vm = new Vue({
           }
           Vue.set(this.users, 0, user);
         }
-        if (this.users.length == 2) {
+        else if (this.users.length == 2) {
           let user = this.users[0];
           user.style = {
             top: "0px",
@@ -266,6 +270,127 @@ var vm = new Vue({
             zIndex: 1,
           }
           Vue.set(this.users, 1, user);
+        }
+        else if (this.users.length <= 16) {
+          let d = 0;
+          for (let i = 0; i < 4; i++) {
+            if (i * i >= this.users.length) {
+              d = i;
+              break;
+            }
+          }
+          let y = 0;
+          let x = 0;
+          for (let i = 0; i < this.users.length; i++) {
+            if (i != 0 && i % d == 0) y++;
+            x = (i % d);
+            let user = this.users[i];
+            user.style = {
+              top: y * 100 / d + "%",
+              left: x * 100 / d + "%",
+              width: 100 / d + "%",
+              height: 100 / d + "%",
+              position: "absolute",
+              zIndex: 1,
+            }
+            Vue.set(this.users, i, user);
+          }
+        }
+      }
+      else if (this.layout.using.value == "auto") {
+        if (this.users.length == 1) {
+          let user = this.users[0];
+          user.style = {
+            top: "0px",
+            left: "0px",
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 0, user);
+        }
+        else if (this.users.length == 2) {
+          const w = window.innerWidth
+          const h = window.innerHeight - $(".navbar").outerHeight()
+          const thumbnail_h = h * 0.3;
+          const thumbnail_w = thumbnail_h * 4 / 3;
+          this.users.forEach((user, index) => {
+            if (index == 0) {
+              user.style = {
+                top: "0px",
+                left: "0px",
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                zIndex: 1,
+              }
+            }
+            else {
+              user.style = {
+                bottom: "10px",
+                right: 10 * index + thumbnail_w * (index - 1) + "px",
+                width: `${thumbnail_w}px`,
+                height: `${thumbnail_h}px`,
+                position: "absolute",
+                zIndex: 2,
+              }
+            }
+            Vue.set(this.users, index, user);
+          });
+        }
+        else if (this.users.length == 3) {
+          const ratio = 0.65
+          const w = window.innerWidth
+          const h = window.innerHeight - $(".navbar").outerHeight()
+          let v_t = 0
+          let v_l = 0
+          let v_w = 0
+          let v_h = 0
+          let user = null
+
+          v_w = ratio * w
+          v_h = h
+          user = this.users[0];
+          user.style = {
+            top: "0px",
+            left: "0px",
+            width: `${v_w}px`,
+            height: `${v_h}px`,
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 0, user);
+
+          v_t = 0
+          v_l = ratio * w
+          v_w = (1.0 - ratio) * w
+          v_h = 0.5 * h
+          user = this.users[1];
+          user.style = {
+            top: "0px",
+            left: `${v_l}px`,
+            width: `${v_w}px`,
+            height: `${v_h}px`,
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 1, user);
+
+          v_t = 0.5 * h
+          v_l = ratio * w
+          v_w = (1.0 - ratio) * w
+          v_h = 0.5 * h
+          user = this.users[2];
+          user.style = {
+            top: `${v_t}px`,
+            left: `${v_l}px`,
+            width: `${v_w}px`,
+            height: `${v_h}px`,
+            position: "absolute",
+            zIndex: 1,
+          }
+          Vue.set(this.users, 2, user);
         }
         else if (this.users.length <= 16) {
           let d = 0;
@@ -729,10 +854,11 @@ var vm = new Vue({
     },
     layout: {
       item: [
+        { label: "Auto", value: "auto" },
         { label: "PinP", value: "pinp" },
         { label: "Grid", value: "grid" },
       ],
-      using: { label: "PinP", value: "pinp" }
+      using: { label: "Auto", value: "auto" }
     }
   },
 });
