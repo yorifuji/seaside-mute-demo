@@ -130,6 +130,7 @@
       $(window).on('load resize', function(){
         $(".container").width(window.innerWidth);
         $(".container").height(window.innerHeight - $(".navbar").outerHeight());
+        vm.calc_layout()
       });
     </script>
 
