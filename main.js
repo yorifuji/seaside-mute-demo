@@ -224,8 +224,8 @@ var vm = new Vue({
           }
           else {
             user.style = {
-              bottom: "10px",
-              right: 10 * index + thumbnail_w * (index - 1) + "px",
+              bottom: "0px",
+              right: 10 * (index - 1) + thumbnail_w * (index - 1) + "px",
               width: `${thumbnail_w}px`,
               height: `${thumbnail_h}px`,
               position: "absolute",
@@ -313,8 +313,8 @@ var vm = new Vue({
         else if (this.users.length == 2) {
           const w = window.innerWidth
           const h = window.innerHeight - $(".navbar").outerHeight()
-          const thumbnail_h = h * 0.3;
-          const thumbnail_w = thumbnail_h * 4 / 3;
+          const thumbnail_h = h * 0.25;
+          const thumbnail_w = thumbnail_h * 16 / 9;
           this.users.forEach((user, index) => {
             if (index == 0) {
               user.style = {
@@ -328,8 +328,8 @@ var vm = new Vue({
             }
             else {
               user.style = {
-                bottom: "10px",
-                right: 10 * index + thumbnail_w * (index - 1) + "px",
+                bottom: "0px",
+                right: 10 * (index - 1) + thumbnail_w * (index - 1) + "px",
                 width: `${thumbnail_w}px`,
                 height: `${thumbnail_h}px`,
                 position: "absolute",
