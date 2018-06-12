@@ -209,8 +209,8 @@ var vm = new Vue({
       if (this.layout.using.value == "pinp") {
         const w = window.innerWidth
         const h = window.innerHeight - $(".navbar").outerHeight()
-        const thumbnail_h = h * 0.3;
-        const thumbnail_w = thumbnail_h * 4 / 3;
+        const thumbnail_h = h * 0.25;
+        const thumbnail_w = thumbnail_h * 16 / 9;
         this.users.forEach((user, index) => {
           if (index == 0) {
             user.style = {
