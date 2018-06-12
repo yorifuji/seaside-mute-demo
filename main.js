@@ -512,7 +512,8 @@ var vm = new Vue({
       navigator.mediaDevices.getUserMedia(constraints).then(stream => {
         _dtr(stream)
         this.skyway.stream = stream;
-        this.set_stream(this.skyway.peer.id, stream);
+//        this.set_stream(this.skyway.peer.id, stream);
+        this.set_stream(this.skyway.peer.id, new MediaStream(stream.getVideoTracks()));
 
         if (this.skyway.call) {
           this.skyway.call.replaceStream(stream);
