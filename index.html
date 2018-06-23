@@ -47,7 +47,7 @@
     <div id="vue-app" class="container">
       <div class="video-container">
         <div class="video-frame" v-for="user in rendererUsers" :user="user" :style="user.style">
-          <video v-source="user.stream" :class="styleCover" @click="click_video(user.stream)" autoplay playsinline></video>
+          <video v-videostream="user.stream" :class="styleCover" @click="click_video(user.stream)" autoplay playsinline></video>
         </div>
       </div>
       <nav class="navbar fixed-bottom navbar-expand-lg navbar-dark bg-dark">
@@ -89,6 +89,12 @@
               <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : !has_microphone}">Microphone</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_microphone">
                 <button type="button" class="dropdown-item" v-for="mic in microphone.device" :class="{active : microphone.using && microphone.using.deviceId == mic.deviceId}" @click="select_mic(mic)">{{ mic.label }}</button>
+              </div>
+            </li>
+            <li class="nav-item dropup">
+              <span class="nav-link dropdown-toggle" id="dropdown_speaker" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : !has_speaker}">speaker</span>
+              <div class="dropdown-menu" aria-labelledby="dropdown_speaker">
+                <button type="button" class="dropdown-item" v-for="dev in speaker.device" :class="{active : speaker.using && speaker.using.deviceId == dev.deviceId}" @click="select_spk(dev)">{{ dev.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">

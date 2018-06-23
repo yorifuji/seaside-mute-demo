@@ -34,6 +34,9 @@ var vm = new Vue({
     },
     has_microphone: function () {
       return this.microphone.device && this.microphone.device.length
+    },
+    has_speaker: function () {
+      return this.speaker.device && this.speaker.device.length
     }
   },
   methods: {
@@ -182,6 +185,16 @@ var vm = new Vue({
         this.microphone.using = device;
       }
       this.step1(this.get_constraints());
+    },
+    select_spk: function (device) {
+      _dtr(`select_spk:${device.label}`)
+      console.log(device);
+      if (this.speaker.using == device) {
+        this.speaker.using = null;
+      }
+      else {
+        this.speaker.using = device;
+      }
     },
     select_renderer: function (item) {
       _dtr(`select_renderer:${item.label}`)
@@ -590,9 +603,12 @@ var vm = new Vue({
     enumrate_media_devices: function () {
       _dtr(`enumrate_media_devices:`)
       let mic_old = this.microphone.using;
+      let spk_old = this.speaker.using;
       let cam_old = this.camera.using;
       this.microphone.device = []
       this.microphone.using = null;
+      this.speaker.device = []
+      this.speaker.using = null;
       this.camera.device = []
       this.camera.using = null;
       navigator.mediaDevices.enumerateDevices()
@@ -602,14 +618,23 @@ var vm = new Vue({
             const deviceInfo = deviceInfos[i];
             if (deviceInfo.kind === 'audioinput') {
               this.microphone.device.push(deviceInfo)
+            } else if (deviceInfo.kind === 'audiooutput') {
+              this.speaker.device.push(deviceInfo)
             } else if (deviceInfo.kind === 'videoinput') {
-              this.camera.device.push(deviceInfo)
+             this.camera.device.push(deviceInfo)
             }
-          }
+        }
           if (mic_old) {
             for (let i = 0; i < this.microphone.device.length; i++) {
               if (mic_old.deviceId == this.microphone.device[i].deviceId) {
                 this.microphone.using = this.microphone.device[i];
+              }
+            }
+          }
+          if (spk_old) {
+            for (let i = 0; i < this.speaker.device.length; i++) {
+              if (spk_old.deviceId == this.speaker.device[i].deviceId) {
+                this.speaker.using = this.speaker.device[i];
               }
             }
           }
@@ -731,15 +756,29 @@ var vm = new Vue({
     });
   },
   directives: {
-    source: {
+    videostream: {
       bind(el, binding) {
+        _dtr("bind")
+        _dtr(binding)
+        if (vm.speaker.using && binding.value.getAudioTracks().length) {
+          const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
+          setspk()
+        }
         el.srcObject = binding.value
-        el.play()
+        const play = async () => { await el.play() }
+        play();
       },
       update(el, binding) {
+        _dtr("update")
+        _dtr(binding)
+        if (vm.speaker.using && binding.value.getAudioTracks().length) {
+          const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
+          setspk()
+        }
         if (binding.value !== binding.oldValue) {
           el.srcObject = binding.value
-          el.play()
+          const play = async () => { await el.play() }
+          play()
         }
       }
     }
@@ -798,6 +837,10 @@ var vm = new Vue({
       device: [],
       using: null,
     },
+    speaker: {
+      device: [],
+      using: null,
+    },
     camera: {
       device: [],
       using: null,
@@ -825,11 +868,11 @@ var vm = new Vue({
           { label: "4096 x 2160", value: { width: 4096, height: 2160 } },
           { label: "3840 x 2160", value: { width: 3840, height: 2160 } },
           { label: "1920 x 1080", value: { width: 1920, height: 1080 } },
-          // { label: "1280 x 960",  value: { width: 1280, height:  960 } },
-          { label: "1280 x 720", value: { width: 1280, height: 720 } },
+          { label: "1280 x 960",  value: { width: 1280, height:  960 } },
+          { label: "1280 x 720",  value: { width: 1280, height:  720 } },
           // { label: " 960 x 720",  value: { width:  960, height:  720 } },
           // { label: " 800 x 600",  value: { width:  800, height:  600 } },
-          { label: " 640 x 480", value: { width: 640, height: 480 } },
+          { label: " 640 x 480",  value: { width:  640, height:  480 } },
           // { label: " 320 x 240",  value: { width:  320, height:  240 } },
         ],
         using: null,
