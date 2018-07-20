@@ -241,7 +241,7 @@ var vm = new Vue({
       else {
         this.skyway.ss = ScreenShare.create({debug: true});
         if (!this.skyway.ss.isScreenShareAvailable()) {
-          alert("screen share is not allowed")
+          alert("Screen share is available in Firefox.")
           this.skyway.ss = null;
           return;
         };
