@@ -4,39 +4,60 @@ let _dtr = console.log;
 
 var vm = new Vue({
   el: "#vue-app",
-  computed: {
-    rendererUsers: function () {
-      return this.users.filter(user => user.stream);
+  data: {
+    users: [],
+    skyway: {
+      mode: {
+        item: consts.skyway.mode,
+        using: { label: "Mesh", value: "mesh" },
+      },
+      peer: null,
+      call: null,
+      room: null,
+      stream: null,
+      peerId: null,
+      callto: null,
+      stats: "",
+      login_automatically: false,
+      ss: null, // screen share
     },
-    styleCover: function () {
-      return { "video cover": this.renderer.using.value == "cover" }
+    microphone: {
+      device: [],
+      using: null,
     },
-    is_online: function () {
-      return (this.skyway.call || this.skyway.room) ? true : false;
+    speaker: {
+      device: [],
+      using: null,
     },
-    is_offline: function () {
-      return !this.skyway.call && !this.skyway.room;
+    camera: {
+      device: [],
+      using: null,
     },
-    is_p2p: function () {
-      return this.skyway.mode.using.value == "p2p";
+    bandwidth: {
+      item: consts.bandwidth,
+      using: null,
     },
-    is_mesh: function () {
-      return this.skyway.mode.using.value == "mesh";
+    video: {
+      codec: {
+        item: consts.video.codec,
+        using: null,
+      },
+      size: {
+        item: consts.video.size,
+        using: null,
+      },
+      fps: {
+        item: consts.video.fps,
+        using: null,
+      },
     },
-    is_sfu: function () {
-      return this.skyway.mode.using.value == "sfu";
+    renderer: {
+      item: consts.renderer,
+      using: { label: "Cover", value: "cover" }
     },
-    is_codec_selectable: function () {
-      return this.skyway.mode.using.value != "sfu" && (!this.skyway.call && !this.skyway.room);
-    },
-    has_camera: function () {
-      return this.camera.device && this.camera.device.length
-    },
-    has_microphone: function () {
-      return this.microphone.device && this.microphone.device.length
-    },
-    has_speaker: function () {
-      return this.speaker.device && this.speaker.device.length
+    layout: {
+      item: consts.layout,
+      using: { label: "Auto", value: "auto" }
     }
   },
   methods: {
@@ -237,9 +258,9 @@ var vm = new Vue({
         else {
           _dtr("replace stream error.");
         }
-    }
+      }
       else {
-        this.skyway.ss = ScreenShare.create({debug: true});
+        this.skyway.ss = ScreenShare.create({ debug: true });
         if (!this.skyway.ss.isScreenShareAvailable()) {
           alert("Screen share is available in Firefox.")
           this.skyway.ss = null;
@@ -249,8 +270,7 @@ var vm = new Vue({
           // width:     1600,
           // height:    1200,
           frameRate: 10,
-        })
-        .then(stream => {
+        }).then(stream => {
           _dtr(stream)
 
           // set screen share stream to self image
@@ -269,9 +289,8 @@ var vm = new Vue({
           else {
             _dtr("replace stream error.");
           }
-  
-        })
-        .catch(error => {
+
+        }).catch(error => {
           alert(error);
           console.log(error);
           this.skyway.ss = null;
@@ -586,8 +605,9 @@ var vm = new Vue({
       }
       navigator.mediaDevices.getUserMedia(constraints).then(stream => {
         _dtr(stream)
+        stream.getTracks().forEach(console.log)
         this.skyway.stream = stream;
-//        this.set_stream(this.skyway.peer.id, stream);
+        //        this.set_stream(this.skyway.peer.id, stream);
         this.set_stream(this.skyway.peer.id, new MediaStream(stream.getVideoTracks()));
 
         if (this.skyway.call) {
@@ -683,9 +703,9 @@ var vm = new Vue({
             } else if (deviceInfo.kind === 'audiooutput') {
               this.speaker.device.push(deviceInfo)
             } else if (deviceInfo.kind === 'videoinput') {
-             this.camera.device.push(deviceInfo)
+              this.camera.device.push(deviceInfo)
             }
-        }
+          }
           if (mic_old) {
             for (let i = 0; i < this.microphone.device.length; i++) {
               if (mic_old.deviceId == this.microphone.device[i].deviceId) {
@@ -728,7 +748,41 @@ var vm = new Vue({
         });
     }
   },
-
+  computed: {
+    rendererUsers: function () {
+      return this.users.filter(user => user.stream);
+    },
+    styleCover: function () {
+      return { "video cover": this.renderer.using.value == "cover" }
+    },
+    is_online: function () {
+      return (this.skyway.call || this.skyway.room) ? true : false;
+    },
+    is_offline: function () {
+      return !this.skyway.call && !this.skyway.room;
+    },
+    is_p2p: function () {
+      return this.skyway.mode.using.value == "p2p";
+    },
+    is_mesh: function () {
+      return this.skyway.mode.using.value == "mesh";
+    },
+    is_sfu: function () {
+      return this.skyway.mode.using.value == "sfu";
+    },
+    is_codec_selectable: function () {
+      return this.skyway.mode.using.value != "sfu" && (!this.skyway.call && !this.skyway.room);
+    },
+    has_camera: function () {
+      return this.camera.device && this.camera.device.length
+    },
+    has_microphone: function () {
+      return this.microphone.device && this.microphone.device.length
+    },
+    has_speaker: function () {
+      return this.speaker.device && this.speaker.device.length
+    }
+  },
   mounted: function () {
     // check API KEY
     if (!window.hasOwnProperty("__SKYWAY_KEY__") || window.__SKYWAY_KEY__ == "__SKYWAY_KEY__") {
@@ -847,274 +901,6 @@ var vm = new Vue({
     }
   },
   watch: {
-    // users: function(users) {
-
-    //     // Vue.nextTick().then(function () {
-    //     //   this.apply_streams();
-    //     // });
-
-    //     // Vue.nextTick().then(function () {
-    //     //     vm.users.forEach( user => {
-    //     //     if (document.getElementById(user.peerId)) {
-    //     //         document.getElementById(user.peerId).srcObject = user.stream;
-    //     //     }
-    //     //     })
-    //     // })
-
-    //     // Vue.nextTick()
-    //     //         .then(function () {
-    //     //             document.getElementById("foo").srcObject = vm.stream;
-    //     //         })
-    // },
-    // streams: function(streams) {
-    //   Vue.nextTick().then(function () {
-    //     vm.streams.forEach( stream => {
-    //       if (document.getElementById(stream.id)) {
-    //         document.getElementById(stream.id).srcObject = stream.stream;
-    //       }
-    //     })
-    //   })
-    // }
-  },
-  data: {
-    users: [],
-    skyway: {
-      mode: {
-        item: [
-          { label: "P2P", value: "p2p" },
-          { label: "Mesh", value: "mesh" },
-          { label: "SFU", value: "sfu" },
-        ],
-        using: { label: "Mesh", value: "mesh" },
-      },
-      peer: null,
-      call: null,
-      room: null,
-      stream: null,
-      peerId: null,
-      callto: null,
-      stats: "",
-      login_automatically: false,
-      ss: null, // screen share
-    },
-    microphone: {
-      device: [],
-      using: null,
-    },
-    speaker: {
-      device: [],
-      using: null,
-    },
-    camera: {
-      device: [],
-      using: null,
-    },
-    bandwidth: {
-      item: [
-        { label: "5Mbps", value: 5000 },
-        { label: "3Mbps", value: 3000 },
-        { label: "1Mbps", value: 1000 },
-        { label: "500kbps", value: 500 },
-      ],
-      using: null,
-    },
-    video: {
-      codec: {
-        item: [
-          { label: "VP8", value: "VP8" },
-          { label: "VP9", value: "VP9" },
-          { label: "H264", value: "H264" },
-        ],
-        using: null,
-      },
-      size: {
-        item: [
-          { label: "4096 x 2160", value: { width: 4096, height: 2160 } },
-          { label: "3840 x 2160", value: { width: 3840, height: 2160 } },
-          { label: "1920 x 1080", value: { width: 1920, height: 1080 } },
-          { label: "1280 x 960",  value: { width: 1280, height:  960 } },
-          { label: "1280 x 720",  value: { width: 1280, height:  720 } },
-          // { label: " 960 x 720",  value: { width:  960, height:  720 } },
-          // { label: " 800 x 600",  value: { width:  800, height:  600 } },
-          { label: " 640 x 480",  value: { width:  640, height:  480 } },
-          // { label: " 320 x 240",  value: { width:  320, height:  240 } },
-        ],
-        using: null,
-      },
-      fps: {
-        item: [
-          { label: "60 fps", value: 60 },
-          { label: "30 fps", value: 30 },
-          { label: "24 fps", value: 24 },
-          { label: "10 fps", value: 10 },
-          { label: " 5 fps", value: 5 },
-          { label: " 1 fps", value: 1 },
-        ],
-        using: null,
-      },
-    },
-    renderer: {
-      item: [
-        { label: "Cover", value: "cover" },
-        { label: "Normal", value: "normal" },
-      ],
-      using: { label: "Cover", value: "cover" }
-    },
-    layout: {
-      item: [
-        { label: "Auto", value: "auto" },
-        { label: "PinP", value: "pinp" },
-        { label: "Grid", value: "grid" },
-      ],
-      using: { label: "Auto", value: "auto" }
-    }
   },
 });
-
-async function getRTCStats(statsObject) {
-
-  let trasportArray = [];
-  let candidateArray = [];
-  let candidatePairArray = [];
-  let inboundRTPAudioStreamArray = [];
-  let inboundRTPVideoStreamArray = [];
-  let outboundRTPAudioStreamArray = [];
-  let outboundRTPVideoStreamArray = [];
-  let codecArray = [];
-  let mediaStreamTrack_local_audioArray = [];
-  let mediaStreamTrack_local_videoArray = [];
-  let mediaStreamTrack_remote_audioArray = [];
-  let mediaStreamTrack_remote_videoArray = [];
-  let candidatePairId = '';
-  let localCandidateId = '';
-  let remoteCandidateId = '';
-  let localCandidate = {};
-  let remoteCandidate = {};
-  let inboundAudioCodec = {};
-  let inboundVideoCodec = {};
-  let outboundAudioCodec = {};
-  let outboundVideoCodec = {};
-
-  let stats = await statsObject;
-  stats.forEach(stat => {
-    if (stat.id.indexOf('RTCTransport') !== -1) {
-      trasportArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCIceCandidatePair') !== -1) {
-      candidatePairArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCIceCandidate_') !== -1) {
-      candidateArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCInboundRTPAudioStream') !== -1) {
-      inboundRTPAudioStreamArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCInboundRTPVideoStream') !== -1) {
-      inboundRTPVideoStreamArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCOutboundRTPAudioStream') !== -1) {
-      outboundRTPAudioStreamArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCOutboundRTPVideoStream') !== -1) {
-      outboundRTPVideoStreamArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCMediaStreamTrack_local_audio') !== -1) {
-      mediaStreamTrack_local_audioArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCMediaStreamTrack_local_video') !== -1) {
-      mediaStreamTrack_local_videoArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCMediaStreamTrack_remote_audio') !== -1) {
-      mediaStreamTrack_remote_audioArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCMediaStreamTrack_remote_video') !== -1) {
-      mediaStreamTrack_remote_videoArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCCodec') !== -1) {
-      codecArray.push(stat);
-    }
-  });
-
-  trasportArray.forEach(transport => {
-    if (transport.dtlsState === 'connected') {
-      candidatePairId = transport.selectedCandidatePairId;
-    }
-  });
-  candidatePairArray.forEach(candidatePair => {
-    if (candidatePair.state === 'succeeded' && candidatePair.id === candidatePairId) {
-      localCandidateId = candidatePair.localCandidateId;
-      remoteCandidateId = candidatePair.remoteCandidateId;
-    }
-  });
-  candidateArray.forEach(candidate => {
-    if (candidate.id === localCandidateId) {
-      localCandidate = candidate;
-    }
-    if (candidate.id === remoteCandidateId) {
-      remoteCandidate = candidate;
-    }
-  });
-
-  inboundRTPAudioStreamArray.forEach(inboundRTPAudioStream => {
-    codecArray.forEach(codec => {
-      if (inboundRTPAudioStream.codecId === codec.id) {
-        inboundAudioCodec = codec;
-      }
-    });
-  });
-  inboundRTPVideoStreamArray.forEach(inboundRTPVideoStream => {
-    codecArray.forEach(codec => {
-      if (inboundRTPVideoStream.codecId === codec.id) {
-        inboundVideoCodec = codec;
-      }
-    });
-  });
-  outboundRTPAudioStreamArray.forEach(outboundRTPAudioStream => {
-    codecArray.forEach(codec => {
-      if (outboundRTPAudioStream.codecId === codec.id) {
-        outboundAudioCodec = codec;
-      }
-    });
-  });
-  outboundRTPVideoStreamArray.forEach(outboundRTPVideo => {
-    codecArray.forEach(codec => {
-      if (outboundRTPVideo.codecId === codec.id) {
-        outboundVideoCodec = codec;
-      }
-    });
-  });
-
-  let text = "";
-  text += "Local Candidate\n";
-  text += localCandidate.ip + ':' + localCandidate.port + '(' + localCandidate.protocol + ')' + '\ntype:' + localCandidate.candidateType;
-  text += '\n'
-  text += "Remote Candidate\n";
-  text += remoteCandidate.ip + ':' + remoteCandidate.port + '(' + remoteCandidate.protocol + ')' + '\ntype:' + remoteCandidate.candidateType;
-  text += '\n'
-  text += "Inbound Codec\n";
-  text += inboundVideoCodec.mimeType + '\n' + inboundAudioCodec.mimeType;
-  text += '\n'
-  text += "Outbound Codec\n";
-  text += outboundVideoCodec.mimeType + '\n' + outboundAudioCodec.mimeType;
-  text += '\n'
-  text += "Inbound Audio\n";
-  text += 'bytesReceived:' + inboundRTPAudioStreamArray[0].bytesReceived + '\njitter:' + inboundRTPAudioStreamArray[0].jitter + '\nfractionLost:' + inboundRTPAudioStreamArray[0].fractionLost;
-  text += '\n'
-  text += "Inbound Video\n";
-  text += 'bytesReceived:' + inboundRTPVideoStreamArray[0].bytesReceived + '\nfractionLost:' + inboundRTPVideoStreamArray[0].fractionLost;
-  text += '\n'
-  text += "Outbound Audio\n";
-  text += 'bytesReceived:' + outboundRTPAudioStreamArray[0].bytesSent;
-  text += '\n'
-  text += "Outbound Video\n";
-  text += 'bytesReceived:' + outboundRTPVideoStreamArray[0].bytesSent;
-  text += '\n'
-  text += "Local Audio/Vidoe Track\n";
-  text += 'audioLevel:' + mediaStreamTrack_local_audioArray[0].audioLevel + '\nframeHeight:' + mediaStreamTrack_local_videoArray[0].frameHeight + '\nframeWidth:' + mediaStreamTrack_local_videoArray[0].frameWidth + '\nframesSent:' + mediaStreamTrack_local_videoArray[0].framesSent;
-  text += '\n'
-  text += "Remote Audio/Video Track\n";
-  text += 'audioLevel:' + mediaStreamTrack_remote_audioArray[0].audioLevel + '\nframeHeight:' + mediaStreamTrack_remote_videoArray[0].frameHeight + '\nframeWidth:' + mediaStreamTrack_remote_videoArray[0].frameWidth;
-  vm.skyway.stats = text;
-  console.log(text);
-}
 
