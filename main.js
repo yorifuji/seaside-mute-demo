@@ -238,7 +238,7 @@ var vm = new Vue({
         }, 2000);
       }
     },
-    select_screen_share: function () {
+    select_screen_share: async function () {
       _dtr(`select_screen_share:`);
 
       if (this.skyway.ss) {
@@ -266,35 +266,34 @@ var vm = new Vue({
           this.skyway.ss = null;
           return;
         };
-        this.skyway.ss.start({
+        const stream = this.skyway.ss.start({
           // width:     1600,
           // height:    1200,
           frameRate: 10,
-        }).then(stream => {
-          _dtr(stream)
-
-          // set screen share stream to self image
-          this.set_stream(this.skyway.peer.id, stream);
-
-          // make MediaStream for screen share with self audio
-          const ss_with_audio = new MediaStream(stream.getVideoTracks());
-          if (this.skyway.stream.getAudioTracks()) ss_with_audio.addTrack(this.skyway.stream.getAudioTracks()[0]);
-
-          if (this.skyway.call) {
-            this.skyway.call.replaceStream(ss_with_audio);
-          }
-          else if (this.skyway.room) {
-            this.skyway.room.replaceStream(ss_with_audio);
-          }
-          else {
-            _dtr("replace stream error.");
-          }
-
         }).catch(error => {
           alert(error);
           console.log(error);
           this.skyway.ss = null;
         });
+
+        _dtr(stream)
+
+        // set screen share stream to self image
+        this.set_stream(this.skyway.peer.id, stream);
+
+        // make MediaStream for screen share with self audio
+        const ss_with_audio = new MediaStream(stream.getVideoTracks());
+        if (this.skyway.stream.getAudioTracks()) ss_with_audio.addTrack(this.skyway.stream.getAudioTracks()[0]);
+
+        if (this.skyway.call) {
+          this.skyway.call.replaceStream(ss_with_audio);
+        }
+        else if (this.skyway.room) {
+          this.skyway.room.replaceStream(ss_with_audio);
+        }
+        else {
+          _dtr("replace stream error.");
+        }
       }
     },
     calc_layout: function () {
@@ -597,32 +596,34 @@ var vm = new Vue({
       }
       return ct;
     },
-    step1: function (constraints) {
+    step1: async function (constraints) {
       _dtr(`step1:`)
       _dtr(constraints)
       if (this.skyway.stream) {
         this.skyway.stream.getTracks().forEach(track => track.stop())
       }
-      navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-        _dtr(stream)
-        stream.getTracks().forEach(console.log)
-        this.skyway.stream = stream;
-        //        this.set_stream(this.skyway.peer.id, stream);
-        this.set_stream(this.skyway.peer.id, new MediaStream(stream.getVideoTracks()));
 
-        if (this.skyway.call) {
-          this.skyway.call.replaceStream(stream);
-        }
-        else if (this.skyway.room) {
-          this.skyway.room.replaceStream(stream);
-        }
-        else {
-          this.enumrate_media_devices();
-        }
-      }).catch(err => {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints).catch(err=> {
         _dtr(err)
         alert(`${err.name}:${err.message}:${err.constraintName}`);
-      });
+        return
+      })
+
+      _dtr(stream)
+      stream.getTracks().forEach(console.log)
+
+      this.skyway.stream = stream;
+      this.set_stream(this.skyway.peer.id, new MediaStream(stream.getVideoTracks()));
+
+      if (this.skyway.call) {
+        this.skyway.call.replaceStream(stream);
+      }
+      else if (this.skyway.room) {
+        this.skyway.room.replaceStream(stream);
+      }
+      else {
+        this.enumrate_media_devices();
+      }
     },
     step3: function (room) {
       _dtr(`step3:`)
@@ -682,7 +683,7 @@ var vm = new Vue({
         this.leave_user(this.skyway.call.remoteId);
       });
     },
-    enumrate_media_devices: function () {
+    enumrate_media_devices: async function () {
       _dtr(`enumrate_media_devices:`)
       let mic_old = this.microphone.using;
       let spk_old = this.speaker.using;
@@ -693,59 +694,59 @@ var vm = new Vue({
       this.speaker.using = null;
       this.camera.device = []
       this.camera.using = null;
-      navigator.mediaDevices.enumerateDevices()
-        .then(deviceInfos => {
-          for (let i = 0; i !== deviceInfos.length; ++i) {
-            console.log(deviceInfos[i])
-            const deviceInfo = deviceInfos[i];
-            if (deviceInfo.kind === 'audioinput') {
-              this.microphone.device.push(deviceInfo)
-            } else if (deviceInfo.kind === 'audiooutput') {
-              this.speaker.device.push(deviceInfo)
-            } else if (deviceInfo.kind === 'videoinput') {
-              this.camera.device.push(deviceInfo)
-            }
+
+      const devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
+        _dtr(err)
+        alert(`${err.name}:${err.message}`);
+        return
+      })
+
+      for (let i = 0; i !== devices.length; ++i) {
+        console.log(devices[i])
+        const deviceInfo = devices[i];
+        if (deviceInfo.kind === 'audioinput') {
+          this.microphone.device.push(deviceInfo)
+        } else if (deviceInfo.kind === 'audiooutput') {
+          this.speaker.device.push(deviceInfo)
+        } else if (deviceInfo.kind === 'videoinput') {
+          this.camera.device.push(deviceInfo)
+        }
+      }
+      if (mic_old) {
+        for (let i = 0; i < this.microphone.device.length; i++) {
+          if (mic_old.deviceId == this.microphone.device[i].deviceId) {
+            this.microphone.using = this.microphone.device[i];
           }
-          if (mic_old) {
-            for (let i = 0; i < this.microphone.device.length; i++) {
-              if (mic_old.deviceId == this.microphone.device[i].deviceId) {
-                this.microphone.using = this.microphone.device[i];
-              }
-            }
+        }
+      }
+      if (spk_old) {
+        for (let i = 0; i < this.speaker.device.length; i++) {
+          if (spk_old.deviceId == this.speaker.device[i].deviceId) {
+            this.speaker.using = this.speaker.device[i];
           }
-          if (spk_old) {
-            for (let i = 0; i < this.speaker.device.length; i++) {
-              if (spk_old.deviceId == this.speaker.device[i].deviceId) {
-                this.speaker.using = this.speaker.device[i];
-              }
-            }
+        }
+      }
+      // else {
+      //   if (this.microphone.device.length) {
+      //     this.microphone.using = this.microphone.device[0];
+      //   }
+      // }
+      if (cam_old) {
+        for (let i = 0; i < this.camera.device.length; i++) {
+          if (cam_old.deviceId == this.camera.device[i].deviceId) {
+            this.camera.using = this.camera.device[i];
           }
-          // else {
-          //   if (this.microphone.device.length) {
-          //     this.microphone.using = this.microphone.device[0];
-          //   }
-          // }
-          if (cam_old) {
-            for (let i = 0; i < this.camera.device.length; i++) {
-              if (cam_old.deviceId == this.camera.device[i].deviceId) {
-                this.camera.using = this.camera.device[i];
-              }
-            }
-          }
-          // else {
-          //   if (this.camera.device.length) {
-          //     this.camera.using = this.camera.device[0];
-          //   }
-          // }
-          if (this.skyway.login_automatically) {
-            this.skyway.login_automatically = false
-            this.call()
-          }
-        })
-        .catch(err => {
-          _dtr(err)
-          alert(`${err.name}:${err.message}`);
-        });
+        }
+      }
+      // else {
+      //   if (this.camera.device.length) {
+      //     this.camera.using = this.camera.device[0];
+      //   }
+      // }
+      if (this.skyway.login_automatically) {
+        this.skyway.login_automatically = false
+        this.call()
+      }
     }
   },
   computed: {
@@ -819,25 +820,29 @@ var vm = new Vue({
       this.skyway.peer = new Peer(options)
     }
 
-    this.skyway.peer.on('open', id => {
+    this.skyway.peer.on('open', async (id) => {
       _dtr("peer.on('open'")
       this.update_hash()
-      navigator.mediaDevices.enumerateDevices()
-        .then(deviceInfos => {
-          let has_camera = false;
-          let has_audio = false;
-          deviceInfos.forEach(device => {
-            if (device.kind === 'audioinput') has_audio = true
-            else if (device.kind === 'videoinput') has_camera = true
-          })
-          if (!has_audio && !has_camera) {
-            alert("No audio and camera.")
-          }
-          else {
-            this.step1({ video: has_camera, audio: has_audio })
-          }
-        });
-    });
+
+      const devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
+        _dtr(err)
+        alert(`${err.name}:${err.message}`);
+        return
+      })
+
+      let has_camera = false;
+      let has_audio = false;
+      devices.forEach(device => {
+        if (device.kind === 'audioinput') has_audio = true
+        else if (device.kind === 'videoinput') has_camera = true
+      })
+      if (!has_audio && !has_camera) {
+        alert("No audio and camera.")
+      }
+      else {
+        this.step1({ video: has_camera, audio: has_audio })
+      }
+    })
 
     this.skyway.peer.on('error', err => {
       _dtr("peer.on('error'")
