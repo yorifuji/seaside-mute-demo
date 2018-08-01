@@ -111,12 +111,12 @@
                 <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_screen_share()">{{ this.skyway.ss ? "Stop Screen Share" : "Start Screen Share"}}</button>
               </div>
             </li>
-            <li class="nav-item dropup">
+            <!-- <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_stats" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled: is_mesh || is_sfu}">Stats</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
                 <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_stats()">Output status on console</button>
               </div>
-            </li>
+            </li> -->
           </ul>
           <span class="navbar-brand" :class="{invisible : !is_p2p }" v-cloak>{{ skyway.peer ? skyway.peer.id  : "" }}</span>
           <form class="form-inline mt-2 mt-md-0" @submit.prevent="call">
