@@ -266,7 +266,7 @@ var vm = new Vue({
           this.skyway.ss = null;
           return;
         };
-        const stream = this.skyway.ss.start({
+        const stream = await this.skyway.ss.start({
           // width:     1600,
           // height:    1200,
           frameRate: 10,
@@ -274,6 +274,7 @@ var vm = new Vue({
           alert(error);
           console.log(error);
           this.skyway.ss = null;
+          return;
         });
 
         _dtr(stream)
