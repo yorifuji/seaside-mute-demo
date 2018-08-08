@@ -19,7 +19,7 @@ var vm = new Vue({
       callto: null,
       stats: "",
       login_automatically: false,
-      ss: null, // screen share
+      screenshare: null,
     },
     microphone: {
       device: [],
@@ -241,10 +241,10 @@ var vm = new Vue({
     select_screen_share: async function () {
       _dtr(`select_screen_share:`);
 
-      if (this.skyway.ss) {
+      if (this.skyway.screenshare) {
         _dtr("stop screen share");
-        this.skyway.ss.stop();
-        this.skyway.ss = null;
+        this.skyway.screenshare.stop();
+        this.skyway.screenshare = null;
         // this.get_streams(this.skyway.peer.id).forEach(stream => stream && stream.getVideoTracks().forEach(track => track.stop()))
         this.get_streams(this.skyway.peer.id).forEach(stream => stream && stream.getTracks().forEach(track => track.stop()))
 
@@ -260,20 +260,20 @@ var vm = new Vue({
         }
       }
       else {
-        this.skyway.ss = ScreenShare.create({ debug: true });
-        if (!this.skyway.ss.isScreenShareAvailable()) {
+        this.skyway.screenshare = ScreenShare.create({ debug: true });
+        if (!this.skyway.screenshare.isScreenShareAvailable()) {
           alert("Screen share is available in Firefox.")
-          this.skyway.ss = null;
+          this.skyway.screenshare = null;
           return;
         };
-        const stream = await this.skyway.ss.start({
+        const stream = await this.skyway.screenshare.start({
           // width:     1600,
           // height:    1200,
           frameRate: 10,
         }).catch(error => {
           alert(error);
           console.log(error);
-          this.skyway.ss = null;
+          this.skyway.screenshare = null;
           return;
         });
 
@@ -624,6 +624,10 @@ var vm = new Vue({
       }
       else {
         this.enumrate_media_devices();
+        if (this.skyway.login_automatically) {
+          this.skyway.login_automatically = false
+          this.call()
+        }
       }
     },
     step3: function (room) {
@@ -727,26 +731,12 @@ var vm = new Vue({
           }
         }
       }
-      // else {
-      //   if (this.microphone.device.length) {
-      //     this.microphone.using = this.microphone.device[0];
-      //   }
-      // }
       if (cam_old) {
         for (let i = 0; i < this.camera.device.length; i++) {
           if (cam_old.deviceId == this.camera.device[i].deviceId) {
             this.camera.using = this.camera.device[i];
           }
         }
-      }
-      // else {
-      //   if (this.camera.device.length) {
-      //     this.camera.using = this.camera.device[0];
-      //   }
-      // }
-      if (this.skyway.login_automatically) {
-        this.skyway.login_automatically = false
-        this.call()
       }
     }
   },
