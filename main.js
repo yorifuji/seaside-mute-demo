@@ -816,26 +816,20 @@ var vm = new Vue({
       this.update_hash()
 
       // Check media device
-      const constraints = { video: false, audio: false };
-      const devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
-        _dtr(err)
-        alert(`${err.name}:${err.message}`);
-        return
-      })
-      devices.forEach(device => {
-        if (device.kind === 'audioinput') constraints.audio = true;
-        else if (device.kind === 'videoinput') constraints.video = true;
-      })
-      if (!constraints.video && !constraints.audio) {
-        alert("No audio and camera.")
+      await this.update_devicelist();
+      if (this.microphone.device.length == 0 && this.camera.device.length == 0) {
+        alert("Error, No microphone and camera.")
         return;
       }
 
       // gUM
+      const constraints = { video: false, audio: false };
+      if (this.microphone.device.length) constraints.audio = true;
+      if (this.camera.device.length) constraints.video = true;
       this.step1(constraints);
 
-      // rescan devices to get device details(device name...).
-      this.update_devicelist();
+      // rescan devices to get details(device name...).
+      await this.update_devicelist();
 
       // call automatically
       if (this.skyway.callto) this.call()
