@@ -39,7 +39,7 @@ git config --global user.name "yorifuji@circleci-deploy-bot"
 git remote add seaside git@github.com:yorifuji/seaside.git
 git remote -v
 
-git fetch
+git fetch seaside
 git merge seaside/master 
 
 git log --graph --decorate --all | head
