@@ -6,8 +6,8 @@ echo ----
 cat ~/.ssh/config
 echo ----
 
-apt-get update
-apt-get -y install openssh-client git
+#apt-get update
+#apt-get -y install openssh-client git
 
 ssh-add -l
 
