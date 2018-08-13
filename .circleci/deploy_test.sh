@@ -36,7 +36,8 @@ git merge seaside/master -m "circleci: automatic merge commit"
 
 git log --graph --decorate --all | head
 
-git push
+git push origin master
+
 
 
 
