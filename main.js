@@ -1,6 +1,6 @@
 "use strict";
 
-let _dtr = console.log;
+const _dtr = console.log;
 
 var vm = new Vue({
   el: "#vue-app",
@@ -685,21 +685,16 @@ var vm = new Vue({
     },
     update_devicelist: async function () {
       _dtr(`update_devicelist:`)
-      let mic_old = this.microphone.using;
-      let spk_old = this.speaker.using;
-      let cam_old = this.camera.using;
-      this.microphone.device = []
-      this.microphone.using = null;
-      this.speaker.device = []
-      this.speaker.using = null;
-      this.camera.device = []
-      this.camera.using = null;
 
       const devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
         _dtr(err)
         alert(`${err.name}:${err.message}`);
         return
       })
+
+      this.microphone.device = []
+      this.speaker.device = []
+      this.camera.device = []
 
       for (let i = 0; i !== devices.length; ++i) {
         console.log(devices[i])
@@ -712,26 +707,23 @@ var vm = new Vue({
           this.camera.device.push(deviceInfo)
         }
       }
-      if (mic_old) {
+      if (this.microphone.using) {
         for (let i = 0; i < this.microphone.device.length; i++) {
-          if (mic_old.deviceId == this.microphone.device[i].deviceId) {
-            this.microphone.using = this.microphone.device[i];
-          }
+          if (this.microphone.using.deviceId == this.microphone.device[i].deviceId) break;
         }
+        if (i == this.microphone.device.length) this.microphone.using = null;
       }
-      if (spk_old) {
+      if (this.speaker.using) {
         for (let i = 0; i < this.speaker.device.length; i++) {
-          if (spk_old.deviceId == this.speaker.device[i].deviceId) {
-            this.speaker.using = this.speaker.device[i];
-          }
+          if (this.speaker.using.deviceId == this.speaker.device[i].deviceId) break;
         }
+        if (i == this.speaker.device.length) this.speaker.using = null; 
       }
-      if (cam_old) {
+      if (this.camera.using) {
         for (let i = 0; i < this.camera.device.length; i++) {
-          if (cam_old.deviceId == this.camera.device[i].deviceId) {
-            this.camera.using = this.camera.device[i];
-          }
+          if (this.camera.using.deviceId == this.camera.device[i].deviceId) break;
         }
+        if (i == this.camera.device.length) this.camera.using = null;
       }
     }
   },
