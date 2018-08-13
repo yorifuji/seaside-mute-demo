@@ -40,7 +40,7 @@ git remote add seaside git@github.com:yorifuji/seaside.git
 git remote -v
 
 git fetch seaside
-git merge seaside/master 
+git merge seaside/master -m "circleci: automatic merge commit"
 
 git log --graph --decorate --all | head
 
