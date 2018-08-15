@@ -866,7 +866,8 @@ var vm = new Vue({
   directives: {
     videostream: {
       bind(el, binding) {
-        dtr(`directives:videostream:bind:${binding}`)
+        dtr(`directives:videostream:bind`)
+        dtr(binding)
         if (vm.speaker.using && binding.value.getAudioTracks().length) {
           const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
           setspk()
@@ -876,7 +877,8 @@ var vm = new Vue({
         play();
       },
       update(el, binding) {
-        dtr(`directives:videostream:update:${binding}`)
+        dtr(`directives:videostream:update`)
+        dtr(binding)
         if (vm.speaker.using && binding.value.getAudioTracks().length) {
           const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
           setspk()
