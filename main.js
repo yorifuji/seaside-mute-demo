@@ -1,6 +1,9 @@
 "use strict";
 
-const _dtr = console.log;
+// debug trace
+const startup_date = Date.now();
+const dtr = (...params) => console.log(`TRACE:${Date.now() - startup_date}:`, params)
+dtr("debug", "trace", 1,2,3,4,new Date, "test");
 
 var vm = new Vue({
   el: "#vue-app",
@@ -61,12 +64,12 @@ var vm = new Vue({
   },
   methods: {
     select_skyway_mode: function (item) {
-      _dtr(`select_skyway_mode:${item.label}`)
+      dtr(`select_skyway_mode:${item.label}`)
       this.skyway.mode.using = item;
       this.update_hash()
     },
     call: function () {
-      _dtr(`call:`)
+      dtr(`call:`)
       // disconnect
       if (this.skyway.call) {
         this.skyway.call.close();
@@ -82,42 +85,42 @@ var vm = new Vue({
       if (this.skyway.mode.using.value == "p2p") {
 
         // setup options
-        let options = {};
+        const options = {};
         if (this.video.codec.using) {
           options.videoCodec = this.video.codec.using.value;
         }
         if (this.bandwidth.using) {
           options.videoBandwidth = this.bandwidth.using.value
         }
-        _dtr(options);
+        dtr(options);
 
         // call
         this.skyway.call = this.skyway.peer.call(this.skyway.callto, this.stream, options);
-        _dtr(this.skyway.call);
+        dtr(this.skyway.call);
 
         this.step4(this.skyway.call);
       }
       else if (this.skyway.mode.using.value == "mesh") {
-        let options = { mode: 'mesh', stream: this.stream };
+        const options = { mode: 'mesh', stream: this.stream };
         if (this.video.codec.using) {
           options.videoCodec = this.video.codec.using.value;
         }
         if (this.bandwidth.using) {
           options.videoBandwidth = this.bandwidth.using.value
         }
-        _dtr(options);
+        dtr(options);
 
         this.skyway.room = this.skyway.peer.joinRoom('mesh_video_' + this.skyway.callto, options);
-        _dtr(this.skyway.room);
+        dtr(this.skyway.room);
 
         this.step3(this.skyway.room);
       }
       else if (this.skyway.mode.using.value == "sfu") {
-        let options = { mode: 'sfu', stream: this.stream };
-        _dtr(options);
+        const options = { mode: 'sfu', stream: this.stream };
+        dtr(options);
 
         this.skyway.room = this.skyway.peer.joinRoom('sfu_video_' + this.skyway.callto, options);
-        _dtr(this.skyway.room);
+        dtr(this.skyway.room);
 
         this.step3(this.skyway.room);
       }
@@ -137,16 +140,16 @@ var vm = new Vue({
       location.hash = hash
     },
     click_video: function (stream) {
-      _dtr(`click_video:`)
-      _dtr(stream)
+      dtr(`click_video:`)
+      dtr(stream)
       if (this.users.length <= 1) return;
-      let users = this.users.filter(user => user.stream.id == stream.id);
+      const users = this.users.filter(user => user.stream.id == stream.id);
       this.users = users.concat(this.users.filter(user => user.stream.id != stream.id))
       this.calc_layout();
     },
     select_codec: function (item) {
-      _dtr(`select_codec:${item.label}`)
-      console.log(item)
+      dtr(`select_codec:${item.label}`)
+      dtr(item)
       if (this.video.codec.using == item) {
         this.video.codec.using = null;
       }
@@ -155,8 +158,8 @@ var vm = new Vue({
       }
     },
     select_size: function (item) {
-      _dtr(`select_size:${item.label}`)
-      console.log(item)
+      dtr(`select_size:${item.label}`)
+      dtr(item)
       if (this.video.size.using == item) {
         this.video.size.using = null;
       }
@@ -166,8 +169,8 @@ var vm = new Vue({
       this.step1(this.get_constraints());
     },
     select_fps: function (item) {
-      _dtr(`select_fps:${item.label}`)
-      console.log(item)
+      dtr(`select_fps:${item.label}`)
+      dtr(item)
       if (this.video.fps.using == item) {
         this.video.fps.using = null;
       }
@@ -177,7 +180,7 @@ var vm = new Vue({
       this.step1(this.get_constraints());
     },
     select_bandwidth: function (item) {
-      _dtr(`select_bandwidth:${item.label}`)
+      dtr(`select_bandwidth:${item.label}`)
       if (this.bandwidth.using == item) {
         this.bandwidth.using = null;
       }
@@ -186,7 +189,7 @@ var vm = new Vue({
       }
     },
     select_camera: function (device) {
-      _dtr(`select_camera:${device.label}`)
+      dtr(`select_camera:${device.label}`)
       if (this.camera.using == device) {
         this.camera.using = null;
       }
@@ -196,8 +199,8 @@ var vm = new Vue({
       this.step1(this.get_constraints());
     },
     select_mic: function (device) {
-      _dtr(`select_mic:${device.label}`)
-      console.log(device);
+      dtr(`select_mic:${device.label}`)
+      dtr(device);
       if (this.microphone.using == device) {
         this.microphone.using = null;
       }
@@ -207,8 +210,8 @@ var vm = new Vue({
       this.step1(this.get_constraints());
     },
     select_spk: function (device) {
-      _dtr(`select_spk:${device.label}`)
-      console.log(device);
+      dtr(`select_spk:${device.label}`)
+      dtr(device);
       if (this.speaker.using == device) {
         this.speaker.using = null;
       }
@@ -217,16 +220,16 @@ var vm = new Vue({
       }
     },
     select_renderer: function (item) {
-      _dtr(`select_renderer:${item.label}`)
+      dtr(`select_renderer:${item.label}`)
       this.renderer.using = item;
     },
     select_layout: function (item) {
-      _dtr(`select_layout:${item.label}`)
+      dtr(`select_layout:${item.label}`)
       this.layout.using = item;
       this.calc_layout();
     },
     select_stats: function () {
-      _dtr(`select_stats:`)
+      dtr(`select_stats:`)
       if (this.skyway.stats) {
         clearInterval(window.timer_stats);
         this.skyway.stats = null;
@@ -238,10 +241,10 @@ var vm = new Vue({
       }
     },
     select_screen_share: async function () {
-      _dtr(`select_screen_share:`);
+      dtr(`select_screen_share:`);
 
       if (this.skyway.screenshare) {
-        _dtr("stop screen share");
+        dtr("stop screen share");
         this.skyway.screenshare.stop();
         this.skyway.screenshare = null;
         // this.get_streams(this.skyway.peer.id).forEach(stream => stream && stream.getVideoTracks().forEach(track => track.stop()))
@@ -255,7 +258,7 @@ var vm = new Vue({
           this.skyway.room.replaceStream(this.stream);
         }
         else {
-          _dtr("replace stream error.");
+          dtr("replace stream error.");
         }
       }
       else {
@@ -271,12 +274,12 @@ var vm = new Vue({
           frameRate: 10,
         }).catch(error => {
           alert(error);
-          console.log(error);
+          dtr(error);
           this.skyway.screenshare = null;
           return;
         });
 
-        _dtr(stream)
+        dtr(stream)
 
         // set screen share stream to self image
         this.set_stream(this.skyway.peer.id, stream);
@@ -292,12 +295,12 @@ var vm = new Vue({
           this.skyway.room.replaceStream(ss_with_audio);
         }
         else {
-          _dtr("replace stream error.");
+          dtr("replace stream error.");
         }
       }
     },
     calc_layout: function () {
-      _dtr(`calc_layout:`)
+      dtr(`calc_layout:`)
       if (this.layout.using.value == "pinp") {
         const w = window.innerWidth
         const h = window.innerHeight - $(".navbar").outerHeight()
@@ -329,7 +332,7 @@ var vm = new Vue({
       }
       else if (this.layout.using.value == "grid") {
         if (this.users.length == 1) {
-          let user = this.users[0];
+          const user = this.users[0];
           user.style = {
             top: "0px",
             left: "0px",
@@ -341,7 +344,7 @@ var vm = new Vue({
           Vue.set(this.users, 0, user);
         }
         else if (this.users.length == 2) {
-          let user = this.users[0];
+          const user = this.users[0];
           user.style = {
             top: "0px",
             left: "0px",
@@ -391,7 +394,7 @@ var vm = new Vue({
       }
       else if (this.layout.using.value == "auto") {
         if (this.users.length == 1) {
-          let user = this.users[0];
+          const user = this.users[0];
           user.style = {
             top: "0px",
             left: "0px",
@@ -512,17 +515,17 @@ var vm = new Vue({
       }
     },
     create_user: function (peerId) {
-      _dtr(`create_user:${peerId}`)
+      dtr(`create_user:${peerId}`)
       return {
         peerId: peerId,
         stream: null,
       }
     },
     set_stream: function (peerId, stream) {
-      _dtr(`set_stream:${peerId}`)
-      _dtr(stream)
+      dtr(`set_stream:${peerId}`)
+      dtr(stream)
       if (this.users.filter(user => user.peerId == peerId).length == 0) {
-        let user = this.create_user(peerId);
+        const user = this.create_user(peerId);
         user.stream = stream;
         this.users.unshift(user);
       }
@@ -534,34 +537,34 @@ var vm = new Vue({
       this.calc_layout();
     },
     get_streams: function (peerId) {
-      _dtr(`get_streams:${peerId}`)
+      dtr(`get_streams:${peerId}`)
       return this.users.filter(user => user.peerId == peerId).map(user => user.stream);
     },
     remove_stream: function (peerId, stream) {
-      _dtr(`remove_stream:${peerId}`)
-      _dtr(stream)
+      dtr(`remove_stream:${peerId}`)
+      dtr(stream)
       this.users.forEach(user => {
         if (user.peerId == peerId && user.stream == stream) user.stream = null;
       });
       this.calc_layout();
     },
     join_user: function (peerId) {
-      _dtr(`join_user:${peerId}`)
+      dtr(`join_user:${peerId}`)
       this.users.unshift(this.create_user(peerId));
       this.calc_layout();
     },
     leave_user: function (peerId) {
-      _dtr(`leave_user:${peerId}`)
+      dtr(`leave_user:${peerId}`)
       this.users = this.users.filter(user => user.peerId != peerId);
       this.calc_layout();
     },
     leave_others: function () {
-      _dtr(`leave_others:`)
+      dtr(`leave_others:`)
       this.users = this.users.filter(user => user.peerId == this.skyway.peer.id);
       this.calc_layout();
     },
     get_constraints: function () {
-      _dtr(`get_constraints:`)
+      dtr(`get_constraints:`)
       const ct = { video: false, audio: false };
       if (this.camera.device && this.camera.device.length) {
         const fmt = {};
@@ -597,8 +600,8 @@ var vm = new Vue({
       return ct;
     },
     step1: async function (constraints) {
-      _dtr(`step1:`)
-      _dtr(constraints)
+      dtr(`step1:`)
+      dtr(constraints)
 
       // stop stream
       if (this.stream) {
@@ -607,12 +610,12 @@ var vm = new Vue({
 
       // gUM
       this.stream = await navigator.mediaDevices.getUserMedia(constraints).catch(err => {
-        _dtr(err)
+        dtr(err)
         alert(`${err.name}:${err.message}:${err.constraintName}`);
         return
       })
-      _dtr(this.stream)
-      this.stream.getTracks().forEach(console.log)
+      dtr(this.stream)
+      this.stream.getTracks().forEach(dtr)
 
       // set my steram(only video tracks)
       this.set_stream(this.skyway.peer.id, new MediaStream(this.stream.getVideoTracks()));
@@ -626,68 +629,68 @@ var vm = new Vue({
       }
     },
     step3: function (room) {
-      _dtr(`step3:`)
-      _dtr(room)
+      dtr(`step3:`)
+      dtr(room)
 
       this.update_hash()
 
       // Wait for stream on the call, then set peer video display
       room.on('stream', stream => {
-        _dtr("room.on('stream'")
-        _dtr(stream)
+        dtr("room.on('stream'")
+        dtr(stream)
         this.set_stream(stream.peerId, stream);
       });
 
       room.on('removeStream', stream => {
-        _dtr("room.on('removeStream'")
-        _dtr(stream)
+        dtr("room.on('removeStream'")
+        dtr(stream)
         this.remove_stream(stream.peerId, stream);
       });
 
       room.on('peerJoin', peerId => {
-        _dtr("room.on('peerJoin'")
-        _dtr(peerId)
+        dtr("room.on('peerJoin'")
+        dtr(peerId)
         this.join_user(peerId);
       })
 
       room.on('peerLeave', peerId => {
-        _dtr("room.on('peerLeave'")
-        _dtr(peerId)
+        dtr("room.on('peerLeave'")
+        dtr(peerId)
         this.leave_user(peerId);
       });
 
       room.on('close', () => {
-        _dtr("room.on('close'")
+        dtr("room.on('close'")
         this.leave_others();
         this.skyway.room = null;
         this.update_hash()
       });
     },
     step4: function (call) {
-      _dtr(`step4:${call}`)
+      dtr(`step4:${call}`)
 
       this.update_hash()
 
       // Wait for stream on the call, then set peer video display
       call.on('stream', stream => {
-        _dtr("call.on('stream'")
-        _dtr(stream)
+        dtr("call.on('stream'")
+        dtr(stream)
         this.set_stream(this.skyway.call.remoteId, stream);
       });
       call.on('removeStream', stream => {
-        _dtr("call.on('removeStream'")
-        _dtr(stream)
+        dtr("call.on('removeStream'")
+        dtr(stream)
       });
       call.on('close', () => {
-        _dtr("call.on('close'")
+        dtr("call.on('close'")
         this.leave_user(this.skyway.call.remoteId);
       });
     },
     update_devicelist: async function () {
-      _dtr(`update_devicelist:`)
+      dtr(`update_devicelist:`)
 
       const devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
-        _dtr(err)
+        dtr(err)
         alert(`${err.name}:${err.message}`);
         return
       })
@@ -697,7 +700,7 @@ var vm = new Vue({
       this.camera.device = []
 
       for (let i = 0; i !== devices.length; ++i) {
-        console.log(devices[i])
+        dtr(devices[i])
         const deviceInfo = devices[i];
         if (deviceInfo.kind === 'audioinput') {
           this.microphone.device.push(deviceInfo)
@@ -763,7 +766,7 @@ var vm = new Vue({
     }
   },
   mounted: function () {
-    _dtr(`mounted`)
+    dtr(`mounted`)
     // Check API KEY
     if (!window.hasOwnProperty("__SKYWAY_KEY__") || window.__SKYWAY_KEY__ == "__SKYWAY_KEY__") {
       alert("Please set your API KEY to window.__SKYWAY_KEY__")
@@ -802,7 +805,7 @@ var vm = new Vue({
     const peer = this.skyway.peer; // alias
 
     peer.on('open', async (id) => {
-      _dtr("peer.on('open'")
+      dtr("peer.on('open'")
 
       // Update location url on browser.
       this.update_hash()
@@ -828,32 +831,32 @@ var vm = new Vue({
     })
 
     peer.on('error', err => {
-      _dtr("peer.on('error'")
-      _dtr(err);
+      dtr("peer.on('error'")
+      dtr(err);
       alert(err.message);
       this.skyway.call = null;
     });
 
     peer.on('disconnected', id => {
-      _dtr("peer.on('disconnected'")
-      _dtr(id);
+      dtr("peer.on('disconnected'")
+      dtr(id);
       this.skyway.call = null;
     });
 
     peer.on('call', call => {
-      _dtr("peer.on('call'")
-      _dtr(call);
+      dtr("peer.on('call'")
+      dtr(call);
 
       this.skyway.call = call;
 
-      let options = {};
+      const options = {};
       if (this.video.codec.using) {
         options.videoCodec = this.video.codec.using.value;
       }
       if (this.bandwidth.using) {
         options.videoBandwidth = this.bandwidth.using.value
       }
-      _dtr(options);
+      dtr(options);
 
       this.skyway.call.answer(this.stream, options);
       this.step4(this.skyway.call);
@@ -863,8 +866,7 @@ var vm = new Vue({
   directives: {
     videostream: {
       bind(el, binding) {
-        _dtr("bind")
-        _dtr(binding)
+        dtr(`directives:videostream:bind:${binding}`)
         if (vm.speaker.using && binding.value.getAudioTracks().length) {
           const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
           setspk()
@@ -874,8 +876,7 @@ var vm = new Vue({
         play();
       },
       update(el, binding) {
-        _dtr("update")
-        _dtr(binding)
+        dtr(`directives:videostream:update:${binding}`)
         if (vm.speaker.using && binding.value.getAudioTracks().length) {
           const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
           setspk()
