@@ -143,8 +143,8 @@ var vm = new Vue({
       dtr(`click_video:`)
       dtr(stream)
       if (this.users.length <= 1) return;
-      const users = this.users.filter(user => user.stream.id == stream.id);
-      this.users = users.concat(this.users.filter(user => user.stream.id != stream.id))
+      const users = this.users.filter(user => user.stream && user.stream.id == stream.id);
+      this.users = users.concat(this.users.filter(user => !user.stream || user.stream.id != stream.id))
       this.calc_layout();
     },
     select_codec: function (item) {
