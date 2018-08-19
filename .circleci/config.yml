@@ -1,8 +1,7 @@
 version: 2
 jobs:
-  build:
+  merge:
     docker:
-      #- image: debian:stretch
       - image: circleci/node
     steps:
       - checkout
@@ -12,3 +11,9 @@ jobs:
       - run:
           name: exec script
           command: .circleci/deploy_test.sh
+
+workflows:
+  version: 2
+  auto-merge:
+    jobs:
+      - merge
