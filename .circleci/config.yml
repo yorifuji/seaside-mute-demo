@@ -16,4 +16,8 @@ workflows:
   version: 2
   auto-merge:
     jobs:
-      - merge
+      - merge:
+          filters:
+            branches:
+              only:
+                - master
