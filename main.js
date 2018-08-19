@@ -608,6 +608,18 @@ var vm = new Vue({
         this.stream.getTracks().forEach(track => track.stop())
       }
 
+      await this.update_devicelist();
+      if (this.microphone.device.length == 0 && this.camera.device.length == 0) {
+        alert("Error, No microphone and camera.")
+        return;
+      }
+
+      if (constraints == null) {
+        constraints = { video: false, audio: false };
+        if (this.microphone.device.length) constraints.audio = true;
+        if (this.camera.device.length) constraints.video = true;
+      }
+
       // gUM
       this.stream = await navigator.mediaDevices.getUserMedia(constraints).catch(err => {
         dtr(err)
@@ -627,6 +639,12 @@ var vm = new Vue({
       else if (this.skyway.room) {
         this.skyway.room.replaceStream(this.stream);
       }
+
+      // rescan devices to get details(device name...).
+      this.update_devicelist();
+
+      // call automatically
+      if (this.skyway.callto) this.call()
     },
     step3: function (room) {
       dtr(`step3:`)
@@ -810,24 +828,8 @@ var vm = new Vue({
       // Update location url on browser.
       this.update_hash()
 
-      // Check media device
-      await this.update_devicelist();
-      if (this.microphone.device.length == 0 && this.camera.device.length == 0) {
-        alert("Error, No microphone and camera.")
-        return;
-      }
-
       // gUM
-      const constraints = { video: false, audio: false };
-      if (this.microphone.device.length) constraints.audio = true;
-      if (this.camera.device.length) constraints.video = true;
-      this.step1(constraints);
-
-      // rescan devices to get details(device name...).
-      await this.update_devicelist();
-
-      // call automatically
-      if (this.skyway.callto) this.call()
+      this.step1(null);
     })
 
     peer.on('error', err => {
