@@ -166,7 +166,7 @@ var vm = new Vue({
       else {
         this.video.size.using = item;
       }
-      this.step1(this.get_constraints());
+      this.step2(this.get_constraints());
     },
     select_fps: function (item) {
       dtr(`select_fps:${item.label}`)
@@ -177,7 +177,7 @@ var vm = new Vue({
       else {
         this.video.fps.using = item;
       }
-      this.step1(this.get_constraints());
+      this.step2(this.get_constraints());
     },
     select_bandwidth: function (item) {
       dtr(`select_bandwidth:${item.label}`)
@@ -196,7 +196,7 @@ var vm = new Vue({
       else {
         this.camera.using = device;
       }
-      this.step1(this.get_constraints());
+      this.step2(this.get_constraints());
     },
     select_mic: function (device) {
       dtr(`select_mic:${device.label}`)
@@ -207,7 +207,7 @@ var vm = new Vue({
       else {
         this.microphone.using = device;
       }
-      this.step1(this.get_constraints());
+      this.step2(this.get_constraints());
     },
     select_spk: function (device) {
       dtr(`select_spk:${device.label}`)
@@ -599,14 +599,8 @@ var vm = new Vue({
       }
       return ct;
     },
-    step1: async function (constraints) {
+    step1: async function () {
       dtr(`step1:`)
-      dtr(constraints)
-
-      // stop stream
-      if (this.stream) {
-        this.stream.getTracks().forEach(track => track.stop())
-      }
 
       // enumerate devices
       let devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
@@ -614,6 +608,7 @@ var vm = new Vue({
         alert(`${err.name}:${err.message}`);
         return
       })
+
       this.update_devicelist(devices);
 
       if (this.microphone.device.length == 0 && this.camera.device.length == 0) {
@@ -621,10 +616,40 @@ var vm = new Vue({
         return;
       }
 
-      if (constraints == null) {
-        constraints = { video: false, audio: false };
-        if (this.microphone.device.length) constraints.audio = true;
-        if (this.camera.device.length) constraints.video = true;
+      const constraints = { video: false, audio: false };
+      if (this.microphone.device.length) constraints.audio = true;
+      if (this.camera.device.length) constraints.video = true;
+
+      // gUM
+      this.stream = await navigator.mediaDevices.getUserMedia(constraints).catch(err => {
+        dtr(err)
+        alert(`${err.name}:${err.message}:${err.constraintName}`);
+        return
+      })
+      dtr(this.stream)
+      this.stream.getTracks().forEach(dtr)
+
+      // set my steram(only video tracks)
+      this.set_stream(this.skyway.peer.id, new MediaStream(this.stream.getVideoTracks()));
+
+      // rescan devices to get details(device name...).
+      devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
+        dtr(err)
+        alert(`${err.name}:${err.message}`);
+        return
+      })
+      this.update_devicelist(devices);
+
+      // call automatically
+      if (this.skyway.callto) this.call()
+    },
+    step2: async function (constraints) {
+      dtr(`step2:`)
+      dtr(constraints)
+
+      // stop stream
+      if (this.stream) {
+        this.stream.getTracks().forEach(track => track.stop())
       }
 
       // gUM
@@ -646,17 +671,6 @@ var vm = new Vue({
       else if (this.skyway.room) {
         this.skyway.room.replaceStream(this.stream);
       }
-
-      // rescan devices to get details(device name...).
-      devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
-        dtr(err)
-        alert(`${err.name}:${err.message}`);
-        return
-      })
-      this.update_devicelist(devices);
-
-      // call automatically
-      if (this.skyway.callto) this.call()
     },
     step3: function (room) {
       dtr(`step3:`)
