@@ -608,7 +608,14 @@ var vm = new Vue({
         this.stream.getTracks().forEach(track => track.stop())
       }
 
-      await this.update_devicelist();
+      // enumerate devices
+      let devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
+        dtr(err)
+        alert(`${err.name}:${err.message}`);
+        return
+      })
+      this.update_devicelist(devices);
+
       if (this.microphone.device.length == 0 && this.camera.device.length == 0) {
         alert("Error, No microphone and camera.")
         return;
@@ -641,7 +648,12 @@ var vm = new Vue({
       }
 
       // rescan devices to get details(device name...).
-      this.update_devicelist();
+      devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
+        dtr(err)
+        alert(`${err.name}:${err.message}`);
+        return
+      })
+      this.update_devicelist(devices);
 
       // call automatically
       if (this.skyway.callto) this.call()
@@ -704,14 +716,9 @@ var vm = new Vue({
         this.leave_user(this.skyway.call.remoteId);
       });
     },
-    update_devicelist: async function () {
+    update_devicelist: function (devices) {
       dtr(`update_devicelist:`)
-
-      const devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
-        dtr(err)
-        alert(`${err.name}:${err.message}`);
-        return
-      })
+      dtr(devices)
 
       this.microphone.device = []
       this.speaker.device = []
@@ -729,19 +736,22 @@ var vm = new Vue({
         }
       }
       if (this.microphone.using) {
-        for (let i = 0; i < this.microphone.device.length; i++) {
+        let i = 0;
+        for (; i < this.microphone.device.length; i++) {
           if (this.microphone.using.deviceId == this.microphone.device[i].deviceId) break;
         }
         if (i == this.microphone.device.length) this.microphone.using = null;
       }
       if (this.speaker.using) {
-        for (let i = 0; i < this.speaker.device.length; i++) {
+        let i = 0;
+         for (; i < this.speaker.device.length; i++) {
           if (this.speaker.using.deviceId == this.speaker.device[i].deviceId) break;
         }
         if (i == this.speaker.device.length) this.speaker.using = null; 
       }
       if (this.camera.using) {
-        for (let i = 0; i < this.camera.device.length; i++) {
+        let i = 0;
+        for (; i < this.camera.device.length; i++) {
           if (this.camera.using.deviceId == this.camera.device[i].deviceId) break;
         }
         if (i == this.camera.device.length) this.camera.using = null;
@@ -822,7 +832,7 @@ var vm = new Vue({
 
     const peer = this.skyway.peer; // alias
 
-    peer.on('open', async (id) => {
+    peer.on('open', (id) => {
       dtr("peer.on('open'")
 
       // Update location url on browser.
