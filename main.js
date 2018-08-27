@@ -5,7 +5,7 @@ const startup_date = Date.now();
 const dtr = (...params) => console.log(`TRACE:${Date.now() - startup_date}:`, params)
 dtr("debug", "trace", 1,2,3,4,new Date, "test");
 
-var vm = new Vue({
+const vm = new Vue({
   el: "#vue-app",
   data: {
     users: [],    // everyone
@@ -344,7 +344,7 @@ var vm = new Vue({
           Vue.set(this.users, 0, user);
         }
         else if (this.users.length == 2) {
-          const user = this.users[0];
+          let user = this.users[0];
           user.style = {
             top: "0px",
             left: "0px",
