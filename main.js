@@ -640,6 +640,23 @@ const vm = new Vue({
       })
       this.update_devicelist(devices);
 
+      this.stream.getVideoTracks().forEach(track => {
+        this.camera.device.forEach(device => {
+          if (track.label == device.label) this.camera.using = device;
+        });
+      });
+      dtr(`this.camera.using`, this.camera.using)
+
+      this.stream.getAudioTracks().forEach(track => {
+        this.microphone.device.forEach(device => {
+          if (track.label == device.label) this.microphone.using = device;
+        });
+      });
+      dtr(`this.microphone.using`, this.microphone.using)
+
+      if (this.speaker.device.length) this.speaker.using = this.speaker.device[0];
+      dtr(`this.speaker.using`, this.speaker.using)
+
       // call automatically
       if (this.skyway.callto) this.call()
     },
@@ -818,14 +835,17 @@ const vm = new Vue({
     // Check URL
     const hash = location.hash.match(/^#(p2p|mesh|sfu)-([\w-]+)$/)
     if (hash) {
+      dtr(`hash`, hash)
       for (let item of this.skyway.mode.item) {
         if (item.value == hash[1]) {
           this.skyway.mode.using = item
           if (this.is_p2p) {
             this.skyway.peerId = hash[2];
+            dtr(`peerId`, this.skyway.peerId)
           }
           else if (this.is_mesh || this.is_sfu) {
             this.skyway.callto = hash[2];
+            dtr(`callto`, this.skyway.callto)
           }
           break;
         }
@@ -843,6 +863,7 @@ const vm = new Vue({
     else {
       this.skyway.peer = new Peer(options)
     }
+    dtr(`this.skyway.peer`, this.skyway.peer)
 
     const peer = this.skyway.peer; // alias
 
