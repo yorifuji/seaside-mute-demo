@@ -69,7 +69,7 @@ const vm = new Vue({
       this.update_hash()
     },
     call: function () {
-      dtr(`call:`)
+      dtr(`call`)
       // disconnect
       if (this.skyway.call) {
         this.skyway.call.close();
@@ -92,11 +92,11 @@ const vm = new Vue({
         if (this.bandwidth.using) {
           options.videoBandwidth = this.bandwidth.using.value
         }
-        dtr(options);
+        dtr(`options`, options);
 
         // call
         this.skyway.call = this.skyway.peer.call(this.skyway.callto, this.stream, options);
-        dtr(this.skyway.call);
+        dtr(`call`, this.skyway.call);
 
         this.step4(this.skyway.call);
       }
@@ -108,19 +108,19 @@ const vm = new Vue({
         if (this.bandwidth.using) {
           options.videoBandwidth = this.bandwidth.using.value
         }
-        dtr(options);
+        dtr(`options`, options);
 
         this.skyway.room = this.skyway.peer.joinRoom('mesh_video_' + this.skyway.callto, options);
-        dtr(this.skyway.room);
+        dtr(`room`, this.skyway.room);
 
         this.step3(this.skyway.room);
       }
       else if (this.skyway.mode.using.value == "sfu") {
         const options = { mode: 'sfu', stream: this.stream };
-        dtr(options);
+        dtr(`options`, options);
 
         this.skyway.room = this.skyway.peer.joinRoom('sfu_video_' + this.skyway.callto, options);
-        dtr(this.skyway.room);
+        dtr(`room`, this.skyway.room);
 
         this.step3(this.skyway.room);
       }
@@ -656,8 +656,7 @@ const vm = new Vue({
       if (this.skyway.callto) this.call()
     },
     step2: async function (constraints) {
-      dtr(`step2:`)
-      dtr(constraints)
+      dtr(`step2`, constraints)
 
       // stop stream
       if (this.stream) {
@@ -670,7 +669,8 @@ const vm = new Vue({
         alert(`${err.name}:${err.message}:${err.constraintName}`);
         return
       })
-      dtr(this.stream)
+      dtr(`stream`, this.stream)
+      dtr(`track`)
       this.stream.getTracks().forEach(dtr)
 
       // set my steram(only video tracks)
@@ -685,33 +685,28 @@ const vm = new Vue({
       }
     },
     step3: function (room) {
-      dtr(`step3:`)
-      dtr(room)
+      dtr(`step3`, room)
 
       this.update_hash()
 
       // Wait for stream on the call, then set peer video display
       room.on('stream', stream => {
-        dtr("room.on('stream'")
-        dtr(stream)
+        dtr("room.on('stream'", stream)
         this.set_stream(stream.peerId, stream);
       });
 
       room.on('removeStream', stream => {
-        dtr("room.on('removeStream'")
-        dtr(stream)
+        dtr("room.on('removeStream'", stream)
         this.remove_stream(stream.peerId, stream);
       });
 
       room.on('peerJoin', peerId => {
-        dtr("room.on('peerJoin'")
-        dtr(peerId)
+        dtr("room.on('peerJoin'", peerId)
         this.join_user(peerId);
       })
 
       room.on('peerLeave', peerId => {
-        dtr("room.on('peerLeave'")
-        dtr(peerId)
+        dtr("room.on('peerLeave'", peerId)
         this.leave_user(peerId);
       });
 
@@ -723,19 +718,17 @@ const vm = new Vue({
       });
     },
     step4: function (call) {
-      dtr(`step4:${call}`)
+      dtr(`step4`, call)
 
       this.update_hash()
 
       // Wait for stream on the call, then set peer video display
       call.on('stream', stream => {
-        dtr("call.on('stream'")
-        dtr(stream)
+        dtr("call.on('stream'", stream)
         this.set_stream(this.skyway.call.remoteId, stream);
       });
       call.on('removeStream', stream => {
-        dtr("call.on('removeStream'")
-        dtr(stream)
+        dtr("call.on('removeStream'", stream)
       });
       call.on('close', () => {
         dtr("call.on('close'")
@@ -743,8 +736,7 @@ const vm = new Vue({
       });
     },
     update_devicelist: function (devices) {
-      dtr(`update_devicelist:`)
-      dtr(devices)
+      dtr(`update_devicelist`, devices)
 
       this.microphone.device = []
       this.speaker.device = []
@@ -873,21 +865,18 @@ const vm = new Vue({
     })
 
     peer.on('error', err => {
-      dtr("peer.on('error'")
-      dtr(err);
+      dtr("peer.on('error'", err)
       alert(err.message);
       this.skyway.call = null;
     });
 
     peer.on('disconnected', id => {
-      dtr("peer.on('disconnected'")
-      dtr(id);
+      dtr("peer.on('disconnected'", id)
       this.skyway.call = null;
     });
 
     peer.on('call', call => {
-      dtr("peer.on('call'")
-      dtr(call);
+      dtr("peer.on('call'", call)
 
       this.skyway.call = call;
 
