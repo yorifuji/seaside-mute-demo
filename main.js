@@ -788,22 +788,31 @@ const vm = new Vue({
         if (i == this.camera.device.length) this.camera.using = null;
       }
     },
+    get_silent_audio_track: function() {
+      return new AudioContext().createMediaStreamDestination().stream.getAudioTracks()[0];
+    },
     get_localstream_video: function() {
       return this.stream && this.stream.getVideoTracks().length ?
         new MediaStream(this.stream.getVideoTracks()) : new MediaStream();
     },
     get_localstream_outbound: function() {
-      let outbound_stream = null;
+      const outbound_stream = this.skyway.screenshare ? this.stream_screen.clone() : this.stream.clone();
+      // add audio stream, mic or silent track.
       if (this.skyway.screenshare) {
-        outbound_stream = this.stream_screen.clone();
-        if (!this.microphone.mute && this.stream.getAudioTracks().length) {
-          outbound_stream.addTrack(this.stream.getAudioTracks()[0]);
+        if (this.microphone.mute) {
+          if (outbound_stream.getAudioTracks().length == 0) {
+            outbound_stream.addTrack(this.get_silent_audio_track());
+          }
+        }
+        else {
+          outbound_stream.addTrack(this.stream.clone().getAudioTracks()[0]);
         }
       }
-      else {
-        outbound_stream = this.stream.clone();
-        outbound_stream.getAudioTracks()[0].enabled = !this.microphone.mute;
-      }
+      // set silent
+      outbound_stream.getAudioTracks()[0].enabled = !this.microphone.mute;
+      dtr(outbound_stream.getVideoTracks())
+      dtr(outbound_stream.getAudioTracks())
+
       return outbound_stream;
     },
   },
