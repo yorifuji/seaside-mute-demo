@@ -291,24 +291,16 @@ const vm = new Vue({
           this.skyway.screenshare = null;
           return;
         });
-
         dtr(this.stream_screen)
 
-        const stream_screen2 = new MediaStream(this.stream_screen.getVideoTracks());
-
         // set screen share stream to self video(video track only).
-        this.set_stream(this.skyway.peer.id, stream_screen2);
-
-        // make outbound stream with screen and audio if not muted microphone.
-        if (!this.microphone.mute && this.get_localstream_audio().getTracks().length) {
-          stream_screen2.addTrack(this.get_localstream_audio().getAudioTracks()[0]);
-        }
+        this.set_stream(this.skyway.peer.id, new MediaStream(this.stream_screen.getVideoTracks()));
 
         if (this.skyway.call) {
-          this.skyway.call.replaceStream(stream_screen2);
+          this.skyway.call.replaceStream(this.get_localstream_outbound());
         }
         else if (this.skyway.room) {
-          this.skyway.room.replaceStream(stream_screen2);
+          this.skyway.room.replaceStream(this.get_localstream_outbound());
         }
         else {
           dtr("replace stream error.");
@@ -796,25 +788,21 @@ const vm = new Vue({
         if (i == this.camera.device.length) this.camera.using = null;
       }
     },
-    get_localstream: function() {
-      return this.stream ? this.stream : new MediaStream(); // always return MediaStream.
-    },
     get_localstream_video: function() {
-      return new MediaStream(this.get_localstream().getVideoTracks());
-    },
-    get_localstream_audio: function() {
-      return new MediaStream(this.get_localstream().getAudioTracks());
+      return this.stream && this.stream.getVideoTracks().length ?
+        new MediaStream(this.stream.getVideoTracks()) : new MediaStream();
     },
     get_localstream_outbound: function() {
-      const outbound_stream = new MediaStream();
+      let outbound_stream = null;
       if (this.skyway.screenshare) {
-        outbound_stream.addTrack(this.stream_screen.getVideoTracks()[0]);
+        outbound_stream = this.stream_screen.clone();
+        if (!this.microphone.mute && this.stream.getAudioTracks().length) {
+          outbound_stream.addTrack(this.stream.getAudioTracks()[0]);
+        }
       }
       else {
-        outbound_stream.addTrack(this.get_localstream_video().getVideoTracks()[0]);
-      }
-      if (!this.microphone.mute && this.get_localstream_audio().getAudioTracks().length) {
-        outbound_stream.addTrack(this.get_localstream_audio().getAudioTracks()[0]);
+        outbound_stream = this.stream.clone();
+        outbound_stream.getAudioTracks()[0].enabled = !this.microphone.mute;
       }
       return outbound_stream;
     },
