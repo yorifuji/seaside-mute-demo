@@ -88,6 +88,8 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : !has_microphone}">Microphone</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_microphone">
+                <button type="button" class="dropdown-item" :class="{active : microphone.mute}" @click="select_mute_mic()">Mute</button>
+                <div class="dropdown-divider"></div>
                 <button type="button" class="dropdown-item" v-for="mic in microphone.device" :class="{active : microphone.using && microphone.using.deviceId == mic.deviceId}" @click="select_mic(mic)">{{ mic.label }}</button>
               </div>
             </li>

@@ -26,6 +26,7 @@ const vm = new Vue({
     microphone: {
       device: [],
       using: null,
+      mute: false,
     },
     speaker: {
       device: [],
@@ -204,6 +205,18 @@ const vm = new Vue({
         this.microphone.using = device;
       }
       this.step2(this.get_constraints());
+    },
+    select_mute_mic: function () {
+      dtr(`select_mute_mic`)
+      this.microphone.mute = !this.microphone.mute;
+      // replace stream
+      const stream = this.microphone.mute ? new MediaStream(this.stream.getVideoTracks()) : this.stream;
+      if (this.skyway.call) {
+        this.skyway.call.replaceStream(stream);
+      }
+      else if (this.skyway.room) {
+        this.skyway.room.replaceStream(stream);
+      }
     },
     select_spk: function (device) {
       dtr(`select_spk`, device.label)
