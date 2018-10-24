@@ -96,6 +96,8 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_speaker" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : !has_speaker}">Speaker</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_speaker">
+                <button type="button" class="dropdown-item" :class="{active : speaker.mute}" @click="select_mute_speaker()">Mute</button>
+                <div class="dropdown-divider"></div>
                 <button type="button" class="dropdown-item" v-for="dev in speaker.device" :class="{active : speaker.using && speaker.using.deviceId == dev.deviceId}" @click="select_spk(dev)">{{ dev.label }}</button>
               </div>
             </li>

@@ -31,6 +31,7 @@ const vm = new Vue({
     speaker: {
       device: [],
       using: null,
+      mute: false,
     },
     camera: {
       device: [],
@@ -96,13 +97,13 @@ const vm = new Vue({
         dtr(`options`, options);
 
         // call
-        this.skyway.call = this.skyway.peer.call(this.skyway.callto, this.stream, options);
+        this.skyway.call = this.skyway.peer.call(this.skyway.callto, this.get_outbound_stream(), options);
         dtr(`call`, this.skyway.call);
 
         this.step4(this.skyway.call);
       }
       else if (this.skyway.mode.using.value == "mesh") {
-        const options = { mode: 'mesh', stream: this.stream };
+        const options = { mode: 'mesh', stream: this.get_outbound_stream() };
         if (this.video.codec.using) {
           options.videoCodec = this.video.codec.using.value;
         }
@@ -117,7 +118,7 @@ const vm = new Vue({
         this.step3(this.skyway.room);
       }
       else if (this.skyway.mode.using.value == "sfu") {
-        const options = { mode: 'sfu', stream: this.stream };
+        const options = { mode: 'sfu', stream: this.get_outbound_stream() };
         dtr(`options`, options);
 
         this.skyway.room = this.skyway.peer.joinRoom('sfu_video_' + this.skyway.callto, options);
@@ -210,7 +211,7 @@ const vm = new Vue({
       dtr(`select_mute_mic`)
       this.microphone.mute = !this.microphone.mute;
       // replace stream
-      const stream = this.microphone.mute ? new MediaStream(this.stream.getVideoTracks()) : this.stream;
+      const stream = this.get_outbound_stream();
       if (this.skyway.call) {
         this.skyway.call.replaceStream(stream);
       }
@@ -226,6 +227,10 @@ const vm = new Vue({
       else {
         this.speaker.using = device;
       }
+    },
+    select_mute_speaker: function () {
+      dtr(`select_mute_speaker`)
+      this.speaker.mute = !this.speaker.mute;
     },
     select_renderer: function (item) {
       dtr(`select_renderer`, item.label)
@@ -255,15 +260,14 @@ const vm = new Vue({
         dtr("stop screen share");
         this.skyway.screenshare.stop();
         this.skyway.screenshare = null;
-        // this.get_streams(this.skyway.peer.id).forEach(stream => stream && stream.getVideoTracks().forEach(track => track.stop()))
         this.get_streams(this.skyway.peer.id).forEach(stream => stream && stream.getTracks().forEach(track => track.stop()))
 
-        this.set_stream(this.skyway.peer.id, new MediaStream(this.stream.getVideoTracks()));
+        this.set_stream(this.skyway.peer.id, new MediaStream(this.get_localstream_video()));
         if (this.skyway.call) {
-          this.skyway.call.replaceStream(this.stream);
+          this.skyway.call.replaceStream(this.get_outbound_stream());
         }
         else if (this.skyway.room) {
-          this.skyway.room.replaceStream(this.stream);
+          this.skyway.room.replaceStream(this.get_outbound_stream());
         }
         else {
           dtr("replace stream error.");
@@ -276,7 +280,7 @@ const vm = new Vue({
           this.skyway.screenshare = null;
           return;
         };
-        const stream = await this.skyway.screenshare.start({
+        const screen_stream = await this.skyway.screenshare.start({
           // width:     1600,
           // height:    1200,
           frameRate: 10,
@@ -287,20 +291,20 @@ const vm = new Vue({
           return;
         });
 
-        dtr(stream)
+        dtr(screen_stream)
 
-        // set screen share stream to self image
-        this.set_stream(this.skyway.peer.id, stream);
+        // set screen share stream to self video(video track only).
+        this.set_stream(this.skyway.peer.id, new MediaStream(screen_stream.getVideoTracks()));
 
-        // make MediaStream for screen share with self audio
-        const ss_with_audio = new MediaStream(stream.getVideoTracks());
-        if (this.stream.getAudioTracks()) ss_with_audio.addTrack(this.stream.getAudioTracks()[0]);
+        // make MediaStream for screen share with audio if not muted microphone.
+        const screen_stream2 = new MediaStream(screen_stream.getVideoTracks());
+        if (this.get_outbound_stream().getAudioTracks()) screen_stream2.addTrack(this.get_outbound_stream().getAudioTracks()[0]);
 
         if (this.skyway.call) {
-          this.skyway.call.replaceStream(ss_with_audio);
+          this.skyway.call.replaceStream(screen_stream2);
         }
         else if (this.skyway.room) {
-          this.skyway.room.replaceStream(ss_with_audio);
+          this.skyway.room.replaceStream(screen_stream2);
         }
         else {
           dtr("replace stream error.");
@@ -638,7 +642,7 @@ const vm = new Vue({
       this.stream.getTracks().forEach(dtr)
 
       // set my steram(only video tracks)
-      this.set_stream(this.skyway.peer.id, new MediaStream(this.stream.getVideoTracks()));
+      this.set_stream(this.skyway.peer.id, new MediaStream(this.get_localstream_video()));
 
       // rescan devices to get details(device name...).
       devices = await navigator.mediaDevices.enumerateDevices().catch(err => {
@@ -687,14 +691,14 @@ const vm = new Vue({
       this.stream.getTracks().forEach(dtr)
 
       // set my steram(only video tracks)
-      this.set_stream(this.skyway.peer.id, new MediaStream(this.stream.getVideoTracks()));
+      this.set_stream(this.skyway.peer.id, new MediaStream(this.get_localstream_video()));
 
       // replace stream
       if (this.skyway.call) {
-        this.skyway.call.replaceStream(this.stream);
+        this.skyway.call.replaceStream(this.get_outbound_stream());
       }
       else if (this.skyway.room) {
-        this.skyway.room.replaceStream(this.stream);
+        this.skyway.room.replaceStream(this.get_outbound_stream());
       }
     },
     step3: function (room) {
@@ -787,7 +791,19 @@ const vm = new Vue({
         }
         if (i == this.camera.device.length) this.camera.using = null;
       }
-    }
+    },
+    get_localstream: function() {
+      return this.stream;
+    },
+    get_localstream_video: function() {
+      return this.stream ? new MediaStream(this.stream.getVideoTracks()) : null;
+    },
+    get_localstream_audio: function() {
+      return this.stream ? new MediaStream(this.stream.getAudioTracks()) : null;
+    },
+    get_outbound_stream: function() {
+      return this.microphone.mute ? this.get_localstream_video() : this.stream;
+    },
   },
   computed: {
     rendererUsers: function () {
@@ -902,7 +918,7 @@ const vm = new Vue({
       }
       dtr(options);
 
-      this.skyway.call.answer(this.stream, options);
+      this.skyway.call.answer(this.get_outbound_stream(), options);
       this.step4(this.skyway.call);
     });
 
@@ -919,6 +935,7 @@ const vm = new Vue({
         el.srcObject = binding.value
         const play = async () => { await el.play() }
         play();
+        el.muted = vm.speaker.mute
       },
       update(el, binding) {
         dtr(`directives:videostream:update`)
@@ -932,6 +949,7 @@ const vm = new Vue({
           const play = async () => { await el.play() }
           play()
         }
+        el.muted = vm.speaker.mute
       }
     }
   },
