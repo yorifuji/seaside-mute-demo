@@ -27,7 +27,7 @@ const vm = new Vue({
     microphone: {
       device: [],
       using: null,
-      mute: false,
+      mute: true, // mute microphone as default.
     },
     speaker: {
       device: [],
@@ -829,6 +829,9 @@ const vm = new Vue({
     },
     styleCover: function () {
       return { "video cover": this.renderer.using.value == "cover" }
+    },
+    muteColor: function () {
+      return this.microphone.mute ? "mic-status-muted" : "mic-status-unmuted";
     },
     is_online: function () {
       return (this.skyway.call || this.skyway.room) ? true : false;

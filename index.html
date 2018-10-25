@@ -28,6 +28,23 @@
         position: absolute;
         overflow: hidden;
       }
+      .mic-status {
+        width: 100%;
+        height: 50px;
+        position: absolute;
+        overflow: hidden;
+        z-index: 100;
+        /* background-color: red; */
+        text-align: center;
+        color: #fff;
+        font-size: 30px;
+      }
+      .mic-status-muted {
+        background-color:rgba(255, 0, 0, 0.5);
+      }
+      .mic-status-unmuted {
+        background-color:rgba(0, 255, 0, 0.5);
+      }
       video {
         height: 100%;
         width: 100%;
@@ -46,6 +63,10 @@
   <body>
     <div id="vue-app" class="container">
       <div class="video-container">
+        <div class="mic-status"　:class="muteColor">
+            {{ this.microphone.mute ? "マイクはミュートされています" : "マイクが有効です" }}
+            <button @click="select_mute_mic()">{{ this.microphone.mute ? "ミュートを解除" : "ミュート" }}</button>
+        </div>
         <div class="video-frame" v-for="user in rendererUsers" :user="user" :style="user.style">
           <video v-videostream="user.stream" :class="styleCover" @click="on_click_video(user.stream)" autoplay playsinline></video>
         </div>
