@@ -796,22 +796,22 @@ const vm = new Vue({
         new MediaStream(this.stream.getVideoTracks()) : new MediaStream();
     },
     get_localstream_outbound: function() {
-      const outbound_stream = this.skyway.screenshare ? this.stream_screen.clone() : this.stream.clone();
-      // add audio stream, mic or silent track.
-      if (this.skyway.screenshare) {
-        if (this.microphone.mute) {
-          if (outbound_stream.getAudioTracks().length == 0) {
-            outbound_stream.addTrack(this.get_silent_audio_track());
-          }
+      // video track
+      const outbound_stream = new MediaStream(this.skyway.screenshare ? this.stream_screen.getVideoTracks() : this.stream.getVideoTracks());
+      // audio track
+      if (this.microphone.mute) {
+        outbound_stream.addTrack(this.get_silent_audio_track());
+      }
+      else {
+        if (this.stream.getAudioTracks().length) {
+          outbound_stream.addTrack(this.stream.getAudioTracks()[0]);
         }
         else {
-          outbound_stream.addTrack(this.stream.clone().getAudioTracks()[0]);
+          outbound_stream.addTrack(this.get_silent_audio_track());
         }
       }
-      // set silent
-      outbound_stream.getAudioTracks()[0].enabled = !this.microphone.mute;
-      dtr(outbound_stream.getVideoTracks())
-      dtr(outbound_stream.getAudioTracks())
+      // dtr(outbound_stream.getVideoTracks())
+      // dtr(outbound_stream.getAudioTracks())
 
       return outbound_stream;
     },
