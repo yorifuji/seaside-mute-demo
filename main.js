@@ -796,6 +796,7 @@ const vm = new Vue({
         new MediaStream(this.stream.getVideoTracks()) : new MediaStream();
     },
     get_localstream_outbound: function() {
+      dtr(`get_localstream_outbound`)
       // video track
       const outbound_stream = new MediaStream(this.skyway.screenshare ? this.stream_screen.getVideoTracks() : this.stream.getVideoTracks());
       // audio track
@@ -810,8 +811,14 @@ const vm = new Vue({
           outbound_stream.addTrack(this.get_silent_audio_track());
         }
       }
-      // dtr(outbound_stream.getVideoTracks())
-      // dtr(outbound_stream.getAudioTracks())
+      dtr(`getVideoTracks details`)
+      outbound_stream.getVideoTracks().forEach(track => dtr(track.getSettings()))
+      outbound_stream.getVideoTracks().forEach(track => dtr(track.getConstraints()))
+      outbound_stream.getVideoTracks().forEach(track => dtr(track.getCapabilities ? track.getCapabilities() : "no capabilities"))
+      dtr(`getAudioTracks details`)
+      outbound_stream.getAudioTracks().forEach(track => dtr(track.getSettings()))
+      outbound_stream.getAudioTracks().forEach(track => dtr(track.getConstraints()))
+      outbound_stream.getAudioTracks().forEach(track => dtr(track.getCapabilities ? track.getCapabilities() : "no capabilities"))
 
       return outbound_stream;
     },
