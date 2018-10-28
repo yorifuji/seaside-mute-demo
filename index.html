@@ -47,7 +47,7 @@
     <div id="vue-app" class="container">
       <div class="video-container">
         <div class="video-frame" v-for="user in rendererUsers" :user="user" :style="user.style">
-          <video v-videostream="user.stream" :class="styleCover" @click="click_video(user.stream)" autoplay playsinline></video>
+          <video v-videostream="user.stream" :class="styleCover" @click="on_click_video(user.stream)" autoplay playsinline></video>
         </div>
       </div>
       <nav class="navbar fixed-bottom navbar-expand-lg navbar-dark bg-dark">
@@ -60,70 +60,70 @@
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_mode" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : is_online}">Mode</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_mode">
-                <button type="button" class="dropdown-item" v-for="item in skyway.mode.item" :class="{active : item.value == skyway.mode.using.value}" @click="select_skyway_mode(item)">{{ item.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in skyway.mode.item" :class="{active : item.value == skyway.mode.using.value}" @click="on_select_skyway_mode(item)">{{ item.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_bandwidth" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : is_online || is_sfu}">Bandwidth</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_bandwidth">
-                <button type="button" class="dropdown-item" v-for="item in bandwidth.item" :class="{active : bandwidth.using && bandwidth.using.value == item.value}" @click="select_bandwidth(item)">{{ item.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in bandwidth.item" :class="{active : bandwidth.using && bandwidth.using.value == item.value}" @click="on_select_bandwidth(item)">{{ item.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_video" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Video</span>
               <div class="dropdown-menu" aria-labelledby="dropdown10">
-                <button type="button" class="dropdown-item" v-for="item in video.codec.item" :class="{active : video.codec.using && item.value == video.codec.using.value, disabled: is_sfu}" @click="select_codec(item)">{{ item.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in video.codec.item" :class="{active : video.codec.using && item.value == video.codec.using.value, disabled: is_sfu}" @click="on_select_codec(item)">{{ item.label }}</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="item in video.size.item" :class="{active : video.size.using && item.value == video.size.using.value}" @click="select_size(item)">{{ item.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in video.size.item" :class="{active : video.size.using && item.value == video.size.using.value}" @click="on_select_size(item)">{{ item.label }}</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="item in video.fps.item" :class="{active : video.fps.using && item.value == video.fps.using.value}" @click="select_fps(item)">{{ item.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in video.fps.item" :class="{active : video.fps.using && item.value == video.fps.using.value}" @click="on_select_fps(item)">{{ item.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_camera" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : !has_camera}">Camera</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_camera">
-                <button type="button" class="dropdown-item" v-for="cam in camera.device" :class="{active : camera.using && camera.using.deviceId == cam.deviceId}" @click="select_camera(cam)">{{ cam.label }}</button>
+                <button type="button" class="dropdown-item" v-for="cam in camera.device" :class="{active : camera.using && camera.using.deviceId == cam.deviceId}" @click="on_select_camera(cam)">{{ cam.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_microphone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : !has_microphone}">Microphone</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_microphone">
-                <button type="button" class="dropdown-item" :class="{active : microphone.mute}" @click="select_mute_mic()">Mute</button>
+                <button type="button" class="dropdown-item" :class="{active : microphone.mute}" @click="on_select_microphone_mute()">Mute</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="mic in microphone.device" :class="{active : microphone.using && microphone.using.deviceId == mic.deviceId}" @click="select_mic(mic)">{{ mic.label }}</button>
+                <button type="button" class="dropdown-item" v-for="mic in microphone.device" :class="{active : microphone.using && microphone.using.deviceId == mic.deviceId}" @click="on_select_microphone(mic)">{{ mic.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_speaker" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled : !has_speaker}">Speaker</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_speaker">
-                <button type="button" class="dropdown-item" :class="{active : speaker.mute}" @click="select_mute_speaker()">Mute</button>
+                <button type="button" class="dropdown-item" :class="{active : speaker.mute}" @click="on_select_speaker_mute()">Mute</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="dev in speaker.device" :class="{active : speaker.using && speaker.using.deviceId == dev.deviceId}" @click="select_spk(dev)">{{ dev.label }}</button>
+                <button type="button" class="dropdown-item" v-for="dev in speaker.device" :class="{active : speaker.using && speaker.using.deviceId == dev.deviceId}" @click="on_select_speaker(dev)">{{ dev.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_layout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Layout</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
-                <button type="button" class="dropdown-item" v-for="item in layout.item" :class="{active : item.value == layout.using.value}" @click="select_layout(item)">{{ item.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in layout.item" :class="{active : item.value == layout.using.value}" @click="on_select_layout(item)">{{ item.label }}</button>
                 <div class="dropdown-divider"></div>
-                <button type="button" class="dropdown-item" v-for="item in renderer.item" :class="{active : item.value == renderer.using.value}" @click="select_renderer(item)">{{ item.label }}</button>
+                <button type="button" class="dropdown-item" v-for="item in renderer.item" :class="{active : item.value == renderer.using.value}" @click="on_select_renderer(item)">{{ item.label }}</button>
               </div>
             </li>
             <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_share" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Share</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
-                <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_screen_share()">{{ this.skyway.screenshare ? "Stop Screen Share" : "Start Screen Share"}}</button>
+                <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="on_select_screen_share()">{{ this.skyway.screenshare ? "Stop Screen Share" : "Start Screen Share"}}</button>
               </div>
             </li>
             <!-- <li class="nav-item dropup">
               <span class="nav-link dropdown-toggle" id="dropdown_stats" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class="{disabled: is_mesh || is_sfu}">Stats</span>
               <div class="dropdown-menu" aria-labelledby="dropdown_layout">
-                <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="select_stats()">Output status on console</button>
+                <button type="button" class="dropdown-item" :class="{active : skyway.stats}" @click="on_select_stats()">Output status on console</button>
               </div>
             </li> -->
           </ul>
           <span class="navbar-brand" :class="{invisible : !is_p2p }" v-cloak>{{ skyway.peer ? skyway.peer.id  : "" }}</span>
-          <form class="form-inline mt-2 mt-md-0" @submit.prevent="call">
+          <form class="form-inline mt-2 mt-md-0" @submit.prevent="on_call">
             <input class="form-control mr-sm-2" type="text" :placeholder="is_p2p ? 'PeerID' : 'Room Name'" aria-label="call" v-model="skyway.callto" :readonly="is_online">
             <button class="btn btn-outline-success my-2 my-sm-0" v-cloak>{{ (this.skyway.call || this.skyway.room) ? "leave" : is_p2p ? "Call" : "Join" }}</button>
           </form>
@@ -149,7 +149,7 @@
       $(window).on('load resize', function(){
         $(".container").width(window.innerWidth);
         $(".container").height(window.innerHeight - $(".navbar").outerHeight());
-        vm.calc_layout()
+        vm.update_video_layout()
       });
     </script>
 
