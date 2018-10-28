@@ -65,7 +65,7 @@
       <div class="video-container">
         <div class="mic-status"　:class="muteColor">
             {{ this.microphone.mute ? "マイクはミュートされています" : "マイクが有効です" }}
-            <button @click="select_mute_mic()">{{ this.microphone.mute ? "ミュートを解除" : "ミュート" }}</button>
+            <button @click="on_select_microphone_mute()">{{ this.microphone.mute ? "ミュートを解除" : "ミュート" }}</button>
         </div>
         <div class="video-frame" v-for="user in rendererUsers" :user="user" :style="user.style">
           <video v-videostream="user.stream" :class="styleCover" @click="on_click_video(user.stream)" autoplay playsinline></video>
