@@ -4,7 +4,7 @@ SeaSide is a web application of real-time communication using WebRTC. It is base
 
 # Demo
 
-https://yorifuji.github.io/seaside/
+https://yorifuji.github.io/seaside-mute-demo/
 
 Available for Chrome and Firefox.
 
