@@ -947,25 +947,21 @@ const vm = new Vue({
         dtr(`directives:videostream:bind`)
         dtr(binding)
         if (vm.speaker.using && binding.value.getAudioTracks().length) {
-          const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
-          setspk()
+          el.setSinkId(vm.speaker.using.deviceId);
         }
         el.srcObject = binding.value
-        const play = async () => { await el.play() }
-        play();
         el.muted = vm.speaker.mute
+        el.play();
       },
       update(el, binding) {
         dtr(`directives:videostream:update`)
         dtr(binding)
         if (vm.speaker.using && binding.value.getAudioTracks().length) {
-          const setspk = async () => { await el.setSinkId(vm.speaker.using.deviceId) }
-          setspk()
+          el.setSinkId(vm.speaker.using.deviceId);
         }
         if (binding.value !== binding.oldValue) {
           el.srcObject = binding.value
-          const play = async () => { await el.play() }
-          play()
+          el.play();
         }
         el.muted = vm.speaker.mute
       }
