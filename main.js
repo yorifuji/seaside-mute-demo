@@ -21,7 +21,7 @@ function on_detect_face(faces) {
   const now = Date.now();
   const is_face_detected = Array.isArray(faces) && faces.length > 0;
   if (is_face_detected) {
-    if (face_detect_count == face_detect_threshould) {
+    if (face_detect_count >= face_detect_threshould) {
       dtr(`${now}: faces`);
       vm.microphone.mute = false;
     }
