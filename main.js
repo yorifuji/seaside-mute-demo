@@ -5,6 +5,62 @@ const startup_date = Date.now();
 const dtr = (...params) => console.log(`TRACE:${Date.now() - startup_date}:`, params)
 dtr("debug", "trace", 1,2,3,4,new Date, "test");
 
+// face detector
+let fd = null;
+if (window.FaceDetector == undefined) {
+  dtr('Face Detection not supported');
+}
+else {
+  fd = new FaceDetector();
+}
+const face_detect_interval = 200;
+const face_detect_threshould = 10;
+
+let face_detect_count = 0;
+function on_detect_face(faces) {
+  const now = Date.now();
+  const is_face_detected = Array.isArray(faces) && faces.length > 0;
+  if (is_face_detected) {
+    if (face_detect_count == face_detect_threshould) {
+      dtr(`${now}: faces`);
+      vm.microphone.mute = false;
+    }
+    else {
+      face_detect_count = face_detect_count + 2;
+    }
+  }
+  else {
+    if (face_detect_count == 0) {
+      dtr(`${now}: no face`);
+      vm.microphone.mute = true;
+    }
+    else {
+      face_detect_count = face_detect_count - 1;
+    }
+  }
+}
+
+async function detect_face() {
+  if (vm.stream == null) return;
+  const image = new ImageCapture(vm.stream.getVideoTracks()[0]);
+  const frame = await image.grabFrame().catch(dtr);
+  const faces = await fd.detect(frame).catch(dtr);
+  // dtr(faces);
+  on_detect_face(faces);
+}
+
+async function start_face_detector() {
+  if (fd == null) return;
+  // const faces = fd.detect(new ImageData(1,1)).catch(error => {
+  //   dtr(error);
+  //   alert(error.message);
+  //   return;
+  // });
+  window.setInterval(() => detect_face(), face_detect_interval);
+}
+
+// Vue
+
 const vm = new Vue({
   el: "#vue-app",
   data: {
@@ -943,6 +999,7 @@ const vm = new Vue({
       this.step4(this.skyway.call);
     });
 
+    start_face_detector();
   },
   directives: {
     videostream: {
